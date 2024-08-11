@@ -1,6 +1,5 @@
-from typing import List
+from django.db import models
+from .orcamento_model import Orcamento
 
-class Relatorio: # FAZER NO PADRAO DJANGO
-    def __init__(self, orcamento: 'Orcamento'): # ao definir classe Orcamento retirar ' '
-        self.orcamento = orcamento
-        self.relatorios: List = [] # lista de movimentacoes
+class Relatorio(models.Model):
+    orcamento = models.ForeignKey('Orcamento') # retirar aspas ao criar orcamento
