@@ -18,6 +18,7 @@ from django.urls import path
 from .views.user_views import cadastrar_usuario, atualizar_usuario, buscar_usuario_por_id, deletar_usuario, buscar_usuarios
 
 urlpatterns = [
+  # http://localhost:8000/user/cadastrar/
   path('user/cadastrar/', cadastrar_usuario, name='cadastrar_usuario'),
   path('user/buscar/', buscar_usuarios, name='buscar_usuarios'),
   path('user/buscar/<int:id>/', buscar_usuario_por_id, name='buscar_usuario_por_id'),

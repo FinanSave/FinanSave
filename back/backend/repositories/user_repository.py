@@ -6,6 +6,10 @@ class RepositorioUsuario:
     def criar_usuario(nome, login, senha):
       usuario = Usuario.objects.create(nome=nome, login=login, senha=senha)
       return usuario
+    
+    @staticmethod
+    def buscar_usuarios():
+      return Usuario.objects.all()
 
     @staticmethod
     def buscar_usuario_por_id(user_id):
@@ -16,11 +20,11 @@ class RepositorioUsuario:
       usuario = Usuario.objects.filter(id=user_id).first()
       if usuario:
         if nome:
-            usuario.nome = nome
+          usuario.nome = nome
         if login:
-            usuario.login = login
+          usuario.login = login
         if senha:
-            usuario.senha = senha
+          usuario.senha = senha
         usuario.save()
       return usuario
 
@@ -31,7 +35,3 @@ class RepositorioUsuario:
         usuario.delete()
         return usuario
       return None
-    
-    @staticmethod
-    def buscar_usuarios():
-        return Usuario.objects.all()
