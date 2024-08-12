@@ -9,6 +9,9 @@ media
 # Backup files # 
 *.bak 
 
+# Database #
+*.sqlite3
+
 # Environment Variables
 .env
 .venv

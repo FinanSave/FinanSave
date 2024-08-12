@@ -31,12 +31,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'backend',
+    'django.contrib.auth',         # Sistema de autenticação e autorização
+    'django.contrib.contenttypes', # Gerencia tipos de conteúdo genéricos
+    'django.contrib.sessions',     # Gerencia sessões
+    'django.contrib.messages',     # Sistema de mensagens
+    'django.contrib.staticfiles',  # Gerencia arquivos estáticos
 ]
 
 MIDDLEWARE = [
@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'finansave_db.sqlite3',
     }
 }
 
