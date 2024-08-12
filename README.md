@@ -51,6 +51,7 @@
 
 5. Aplique as migrações do Banco de Dados:
     ```
+      python manage.py makemigrations backend
       python manage.py migrate
     ```
 
