@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint",
+    "dsznajder.es7-react-js-snippets",
+    "BracketPairColorDLW.bracket-pair-color-dlw",
+    "PKief.material-icon-theme",
+    "natqe.reload"
+  ]
+}
