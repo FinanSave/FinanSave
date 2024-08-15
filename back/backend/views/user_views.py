@@ -1,7 +1,8 @@
 import json
 from django.http import JsonResponse
-from backend.controllers.user_controller import ControladorUsuario
+from django.db import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
+from backend.controllers.user_controller import ControladorUsuario
 
 controlador_usuario = ControladorUsuario()
 
@@ -18,9 +19,20 @@ def cadastrar_usuario(request):
 
       try:
         usuario = controlador_usuario.criar_usuario(nome, login, email, senha)
-        return JsonResponse({"id": usuario.id, "nome": usuario.nome, "login": usuario.login, "email": usuario.email, "senha": usuario.senha})
-      except ValueError as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        return JsonResponse({
+            "message": 'Usuário criado com sucesso',
+            "usuario": {
+                "id": usuario.id,
+                "nome": usuario.nome,
+                "login": usuario.login,
+                "email": usuario.email
+            }
+        }, status=201)
+      except IntegrityError as e:
+        if 'UNIQUE constraint failed' in str(e):
+            return JsonResponse({"error": "Nome de usuário ou email já existente. Escolha outro."}, status=400)
+        else:
+            return JsonResponse({"error": "Erro inesperado ao criar usuário."}, status=500)
     except json.JSONDecodeError:
         return JsonResponse({"error": "JSON inválido"}, status=400)
 
@@ -38,7 +50,14 @@ def atualizar_usuario(request, id):
 
       usuario = controlador_usuario.atualizar_usuario(id, nome, login, email, senha)
       if usuario:
-        return JsonResponse({"id": usuario.id, "nome": usuario.nome, "login": usuario.login, "email": usuario.email})
+        return JsonResponse({
+          "message": 'Usuário atualizado com sucesso',
+          "usuario": {
+            "id": usuario.id, 
+            "nome": usuario.nome, 
+            "login": usuario.login, 
+            "email": usuario.email} 
+          })
       else:
         return JsonResponse({"error": "Usuário não encontrado"}, status=404)
     except json.JSONDecodeError:
