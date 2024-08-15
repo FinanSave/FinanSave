@@ -91,7 +91,10 @@ def login(request):
 
       token = controlador_usuario.login_usuario(login, senha)
       if token:
-        return JsonResponse({"token": token})
+        return JsonResponse({
+          "message": "Login realizado com sucesso",
+          "token": token
+          })
       else:
         return JsonResponse({"error": "Login ou senha incorretos"}, status=401)
     except json.JSONDecodeError:
