@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { userRegister } from '../../services/user.service'
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +19,10 @@ const RegisterPage = () => {
     passwordError: '',
     emailError: '',
     isAdultError: '',
+    registrationError: '',
   })
+
+  const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
@@ -64,16 +69,40 @@ const RegisterPage = () => {
       passwordError,
       emailError,
       isAdultError,
+      registrationError: '',
     })
 
     return valid
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validateForm()) {
-      // Lógica para enviar o formulário ao backend
-      console.log('Formulário enviado:', formData)
+      try {
+        const success = await userRegister(
+          formData.firstName,
+          formData.lastName,
+          formData.username,
+          formData.email,
+          formData.password,
+        )
+        if (success) {
+          console.log('Registro realizado com sucesso')
+          router.push('/login')
+        } else {
+          setErrors({
+            ...errors,
+            usernameError: 'Nome de usuário já existe.',
+            emailError: 'E-mail já cadastrado.',
+          })
+        }
+      } catch (error) {
+        setErrors({
+          ...errors,
+          registrationError:
+            'Erro ao tentar registrar. Por favor, tente novamente.',
+        })
+      }
     }
   }
 
@@ -199,6 +228,11 @@ const RegisterPage = () => {
           </div>
           {errors.isAdultError && (
             <p className="mt-1 text-sm text-red-500">{errors.isAdultError}</p>
+          )}
+          {errors.registrationError && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.registrationError}
+            </p>
           )}
           <button
             type="submit"

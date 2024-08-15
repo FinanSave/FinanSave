@@ -10,6 +10,10 @@ const IndexPage = () => {
     router.push('/register')
   }
 
+  const handleLogin = () => {
+    router.push('/login')
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center bg-gray-100">
       {/* Header */}
@@ -33,7 +37,7 @@ const IndexPage = () => {
               Criar conta
             </button>
             <a
-              href="/login"
+              onClick={handleLogin}
               className="rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
             >
               Fazer login

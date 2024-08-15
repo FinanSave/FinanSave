@@ -10,7 +10,7 @@ media
 *.bak 
 
 # Database #
-*.sqlite3
+# *.sqlite3
 
 # Environment Variables
 .env
