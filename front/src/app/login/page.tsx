@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { userLogin } from '../../services/user.service'
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    login: '',
+    senha: '',
   })
 
   const [error, setError] = useState('')
@@ -17,24 +18,21 @@ const LoginPage = () => {
     setFormData({ ...formData, [name]: value })
   }
 
-  const validateLogin = () => {
-    // Simulação de validação. O back-end deve realizar a validação real.
-    if (
-      formData.username !== 'usuarioValido' ||
-      formData.password !== 'senhaValida'
-    ) {
-      setError('Usuário ou senha inválidos')
-      return false
-    }
-    return true
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (validateLogin()) {
-      // Lógica para redirecionar após login bem-sucedido
-      console.log('Login bem-sucedido')
-      router.push('/dashboard') // Exemplo de redirecionamento
+    setError('') // Resetar o erro antes de tentar o login
+
+    try {
+      const token = await userLogin(formData.login, formData.senha)
+      if (token) {
+        localStorage.setItem('authToken', token) // Armazena o token no localStorage
+        console.log('Login realizado com sucesso')
+        // router.push('/dashboard') // Redireciona para o dashboard
+      } else {
+        setError('Login ou senha inválidos')
+      }
+    } catch (err) {
+      setError('Erro ao tentar fazer login. Por favor, tente novamente.')
     }
   }
 
@@ -45,35 +43,35 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
-              htmlFor="username"
+              htmlFor="login"
               className="block text-sm font-medium text-gray-700"
             >
               Nome de usuário ou e-mail
             </label>
             <input
-              id="username"
-              name="username"
+              id="login"
+              name="login"
               type="text"
               required
               className="mt-1 w-full rounded border border-gray-300 p-2"
-              value={formData.username}
+              value={formData.login}
               onChange={handleChange}
             />
           </div>
           <div>
             <label
-              htmlFor="password"
+              htmlFor="senha"
               className="block text-sm font-medium text-gray-700"
             >
               Senha
             </label>
             <input
-              id="password"
-              name="password"
+              id="senha"
+              name="senha"
               type="password"
               required
               className="mt-1 w-full rounded border border-gray-300 p-2"
-              value={formData.password}
+              value={formData.senha}
               onChange={handleChange}
             />
           </div>
