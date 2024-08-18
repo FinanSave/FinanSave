@@ -1,6 +1,9 @@
 from django.db import models
 
+from orcamento_model import Orcamento
+
 class Movimentacao(models.Model):
+
     class Categoria(models.TextChoices):
         TRANSPORTE = "Transporte", "Transporte"
         COMIDA = "Comida", "Comida"

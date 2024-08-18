@@ -43,5 +43,5 @@ class RepositorioUsuario:
       usuario = Usuario.objects.filter(id=user_id).first()
       if usuario:
         usuario.delete()
-        return usuario
+        return f"Usuário {user_id} foi deletado com sucesso"
       return None

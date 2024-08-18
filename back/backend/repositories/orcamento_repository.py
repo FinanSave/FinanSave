@@ -28,6 +28,6 @@ class RepositorioOrcamento:
       orcamento = Orcamento.objects.filter(id=orcamento_id).first()
       if orcamento:
         orcamento.delete()
-        return orcamento
+        return f"Orçamento {orcamento_id} foi deletado com sucesso"
       return None
     
