@@ -1,6 +1,7 @@
 from backend.models.movimentacao_model import Movimentacao
 
 class RepositorioMovimentacao:
+    
     @staticmethod
     def criar_movimentacao(nome, categoria, orcamento, tipo, valor, data, quer_ser_lembrado, recorrente):
         movimentacao = Movimentacao.objects.create(nome = nome, categoria = categoria, orcamento = orcamento, tipo = tipo, valor = valor, data = data, quer_ser_lembrado = quer_ser_lembrado, recorrente = recorrente)
@@ -43,8 +44,9 @@ class RepositorioMovimentacao:
         return movimentacao
 
     @staticmethod
-    def deletar_movimentacao(nome, categoria, orcamento, tipo, valor, data, quer_ser_lembrado, recorrente):
-        movimentacao = Movimentacao.objects.filter(nome = nome, categoria = categoria, orcamento = orcamento, tipo = tipo, valor = valor, data = data, quer_ser_lembrado = quer_ser_lembrado, recorrente = recorrente).first()
+    def deletar_movimentacao(id):
+        movimentacao = Movimentacao.objects.filter(id=id).first()
         if movimentacao: # caso o objeto seja encontrado/exista
             movimentacao.delete()
+            return f"Movimnetação {id} foi deletada com sucesso"
         return None
