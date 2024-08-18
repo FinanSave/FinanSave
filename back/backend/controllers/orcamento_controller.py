@@ -2,7 +2,7 @@ import re
 import jwt
 from datetime import datetime, timedelta
 from django.conf import settings
-from backend.repositories.orcamento_repositorio import RepositorioOrcamento
+from back.backend.repositories.orcamento_repository import RepositorioOrcamento
 
 class ControladorOrcamento:
     def __init__(self):
