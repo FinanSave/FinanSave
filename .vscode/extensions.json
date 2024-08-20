@@ -5,6 +5,9 @@
     "dsznajder.es7-react-js-snippets",
     "BracketPairColorDLW.bracket-pair-color-dlw",
     "PKief.material-icon-theme",
-    "natqe.reload"
+    "natqe.reload",
+    "EditorConfig.EditorConfig",
+    "GitHub.vscode-pull-request-github",
+    "eamodio.gitlens",
   ]
 }
