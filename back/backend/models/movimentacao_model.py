@@ -1,6 +1,6 @@
 from django.db import models
 
-from orcamento_model import Orcamento
+from .orcamento_model import Orcamento
 
 class Movimentacao(models.Model):
 
