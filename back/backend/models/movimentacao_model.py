@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 from .orcamento_model import Orcamento
 
 class Movimentacao(models.Model):
@@ -16,8 +16,8 @@ class Movimentacao(models.Model):
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     quer_ser_lembrado = models.BooleanField(default=False)
     recorrente = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.nome} - {self.categoria} - R${self.valor:.2f}"
