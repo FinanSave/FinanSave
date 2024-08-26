@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.urls import path
 from .views.user_views import cadastrar_usuario, atualizar_usuario, buscar_usuario_por_id, deletar_usuario, buscar_usuarios, login
+from .views.orcamento_views import criar_orcamento, buscar_orcamentos, atualizar_orcamento, deletar_orcamento, buscar_orcamento_por_user_id, buscar_saldo, buscar_orcamento_por_orcamento_id
 
 urlpatterns = [
   # http://localhost:8000/user/cadastrar/
@@ -25,4 +26,11 @@ urlpatterns = [
   path('user/atualizar/<int:id>/', atualizar_usuario, name='atualizar_usuario'),
   path('user/deletar/<int:id>/', deletar_usuario, name='deletar_usuario'),
   path('login/', login, name='login_usuario'),
+  path('orcamento/criar/', criar_orcamento, name='criar_orcamento'),
+  path('orcamento/buscar/', buscar_orcamentos, name='buscar_orcamentos'),
+  path('orcamento/atualizar/<int:user_id>/', atualizar_orcamento, name='atualizar_orcamento'),
+  path('orcamento/deletar/<int:user_id>/', deletar_orcamento, name='deletar_orcamento'),
+  path('orcamento/buscar/<int:user_id>/', buscar_orcamento_por_user_id, name='buscar_orcamento_por_user_id'),
+  path('orcamento/buscar-id/<int:id>/', buscar_orcamento_por_orcamento_id, name='buscar_orcamento_por_orcamento_id'),
+  path('orcamento/buscar-saldo/<int:user_id>/', buscar_saldo, name='buscar_saldo')
 ]
