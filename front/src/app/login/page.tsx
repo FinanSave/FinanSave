@@ -27,13 +27,21 @@ const LoginPage = () => {
       if (token) {
         localStorage.setItem('authToken', token) // Armazena o token no localStorage
         console.log('Login realizado com sucesso')
-        // router.push('/dashboard') // Redireciona para o dashboard
+        router.push('/homepage') // Redireciona para o dashboard
       } else {
         setError('Login ou senha inválidos')
       }
     } catch (err) {
       setError('Erro ao tentar fazer login. Por favor, tente novamente.')
     }
+  }
+
+  const handleBack = () => {
+    router.push('/')
+  }
+
+  const handleRegister = () => {
+    router.push('/register')
   }
 
   return (
@@ -83,11 +91,18 @@ const LoginPage = () => {
             Entrar
           </button>
         </form>
-        <div className="mt-4 text-center">
-          <a href="/register" className="text-blue-700 hover:underline">
-            Criar conta
-          </a>
-        </div>
+        <button
+          onClick={handleRegister}
+          className="mt-4 w-full rounded bg-blue-300 px-4 py-2 text-gray-700 hover:bg-blue-400"
+        >
+          Criar conta
+        </button>
+        <button
+          onClick={handleBack}
+          className="mt-4 w-full rounded bg-blue-300 px-4 py-2 text-gray-700 hover:bg-blue-400"
+        >
+          &larr; Voltar para a página principal
+        </button>
       </div>
     </div>
   )

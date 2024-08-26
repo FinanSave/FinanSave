@@ -106,6 +106,14 @@ const RegisterPage = () => {
     }
   }
 
+  const handleBack = () => {
+    router.push('/')
+  }
+
+  const handleLogin = () => {
+    router.push('/login')
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-200">
       <div className="w-full max-w-md rounded bg-white p-8 shadow-md">
@@ -241,6 +249,18 @@ const RegisterPage = () => {
             Cadastrar
           </button>
         </form>
+        <button
+          onClick={handleLogin}
+          className="mt-4 w-full rounded bg-blue-300 px-4 py-2 text-gray-700 hover:bg-blue-400"
+        >
+          Fazer login
+        </button>
+        <button
+          onClick={handleBack}
+          className="mt-4 w-full rounded bg-blue-300 px-4 py-2 text-gray-700 hover:bg-blue-400"
+        >
+          &larr; Voltar para a página principal
+        </button>
       </div>
     </div>
   )
