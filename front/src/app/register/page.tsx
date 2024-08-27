@@ -1,8 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { ArrowBigLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { userRegister } from '../../services/user.service'
+import Header from '@/components/Header'
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +25,10 @@ const RegisterPage = () => {
   })
 
   const router = useRouter()
+
+  useEffect(() => {
+    localStorage.removeItem('authToken')
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
@@ -106,141 +112,168 @@ const RegisterPage = () => {
     }
   }
 
+  const handleBack = () => {
+    router.push('/')
+  }
+
+  const handleLogin = () => {
+    router.push('/login')
+  }
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-200">
-      <div className="w-full max-w-md rounded bg-white p-8 shadow-md">
-        <h1 className="mb-6 text-center text-3xl font-bold">Criar conta</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="firstName"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Primeiro nome
-            </label>
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              required
-              className="mt-1 w-full rounded border border-gray-300 p-2"
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="lastName"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Sobrenome
-            </label>
-            <input
-              id="lastName"
-              name="lastName"
-              type="text"
-              required
-              className="mt-1 w-full rounded border border-gray-300 p-2"
-              value={formData.lastName}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Nome de usuário
-            </label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              required
-              className="mt-1 w-full rounded border border-gray-300 p-2"
-              value={formData.username}
-              onChange={handleChange}
-            />
-            {errors.usernameError && (
+    <div className="flex min-h-screen flex-col items-center bg-gray-200">
+      <Header className="mb-0.5">
+        <button
+          onClick={handleBack}
+          className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+        >
+          <ArrowBigLeft /> <span>Voltar</span>
+        </button>
+      </Header>
+
+      <div className="flex w-full flex-1 items-center justify-center bg-gray-200">
+        <div className="w-full max-w-md rounded bg-white p-8 shadow-md">
+          <h1 className="mb-6 text-center text-3xl font-bold">Criar conta</h1>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label
+                htmlFor="firstName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Primeiro nome
+              </label>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                required
+                className="mt-1 w-full rounded border border-gray-300 p-2"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="lastName"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Sobrenome
+              </label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                required
+                className="mt-1 w-full rounded border border-gray-300 p-2"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Nome de usuário
+              </label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                className="mt-1 w-full rounded border border-gray-300 p-2"
+                value={formData.username}
+                onChange={handleChange}
+              />
+              {errors.usernameError && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.usernameError}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Senha
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="mt-1 w-full rounded border border-gray-300 p-2"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              {errors.passwordError && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.passwordError}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                E-mail
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="mt-1 w-full rounded border border-gray-300 p-2"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              {errors.emailError && (
+                <p className="mt-1 text-sm text-red-500">{errors.emailError}</p>
+              )}
+            </div>
+            <div className="flex items-center">
+              <input
+                id="isAdult"
+                name="isAdult"
+                type="checkbox"
+                required
+                className="mr-2"
+                checked={formData.isAdult}
+                onChange={handleChange}
+              />
+              <label
+                htmlFor="isAdult"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Ao clicar, você confirma que tem mais de 18 anos
+              </label>
+            </div>
+            {errors.isAdultError && (
+              <p className="mt-1 text-sm text-red-500">{errors.isAdultError}</p>
+            )}
+            {errors.registrationError && (
               <p className="mt-1 text-sm text-red-500">
-                {errors.usernameError}
+                {errors.registrationError}
               </p>
             )}
-          </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+            <button
+              type="submit"
+              className="w-full rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
             >
-              Senha
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="mt-1 w-full rounded border border-gray-300 p-2"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            {errors.passwordError && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.passwordError}
-              </p>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              Cadastrar
+            </button>
+          </form>
+          <div className="mt-4 text-center">
+            <button
+              onClick={handleLogin}
+              className="w-full rounded bg-gray-200 px-4 py-2 font-bold text-blue-700 hover:bg-gray-300 focus:outline-none"
             >
-              E-mail
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              className="mt-1 w-full rounded border border-gray-300 p-2"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            {errors.emailError && (
-              <p className="mt-1 text-sm text-red-500">{errors.emailError}</p>
-            )}
+              Fazer Login
+            </button>
           </div>
-          <div className="flex items-center">
-            <input
-              id="isAdult"
-              name="isAdult"
-              type="checkbox"
-              required
-              className="mr-2"
-              checked={formData.isAdult}
-              onChange={handleChange}
-            />
-            <label
-              htmlFor="isAdult"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Ao clicar, você confirma que tem mais de 18 anos
-            </label>
-          </div>
-          {errors.isAdultError && (
-            <p className="mt-1 text-sm text-red-500">{errors.isAdultError}</p>
-          )}
-          {errors.registrationError && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.registrationError}
-            </p>
-          )}
-          <button
-            type="submit"
-            className="w-full rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
-          >
-            Cadastrar
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   )

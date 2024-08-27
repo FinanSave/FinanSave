@@ -31,7 +31,7 @@
 
 ### Backend (Django)
 
-1. Instale qualquer versão do Python 3.1X (10 ou 11) | [Download Python](https://www.python.org/downloads/)
+1. Instale qualquer versão do Python 3.1X (10, 11 ou 12) | [Download Python](https://www.python.org/downloads/)
 
 2. Navegue até a pasta do back
     ```
@@ -49,7 +49,7 @@
       pip install -r requirements.txt
     ```
 
-5. Aplique as migrações do Banco de Dados:
+5. Aplique as migrações do Banco de Dados:  (**APENAS QUANDO ALTERAR ALGUM MODEL**)
     ```
       python manage.py makemigrations backend
       python manage.py migrate
