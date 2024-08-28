@@ -17,6 +17,7 @@ Including another URLconf
 from django.urls import path
 from .views.user_views import cadastrar_usuario, atualizar_usuario, buscar_usuario_por_id, deletar_usuario, buscar_usuarios, login
 from .views.orcamento_views import criar_orcamento, buscar_orcamentos, atualizar_orcamento, deletar_orcamento, buscar_orcamento_por_user_id, buscar_saldo, buscar_orcamento_por_orcamento_id
+from .views.movimentacao_view import registrar_gasto, registrar_entrada, buscar_movimentacoes, deletar_movimentacao, buscar_movimentacao_orcamento_id, buscar_movimentacao_tipo, atualizar_movimentacao, buscar_movimentacao_recorrente, buscar_movimentacao_categoria
 
 urlpatterns = [
   # http://localhost:8000/user/cadastrar/
@@ -32,5 +33,15 @@ urlpatterns = [
   path('orcamento/deletar/<int:user_id>/', deletar_orcamento, name='deletar_orcamento'),
   path('orcamento/buscar/<int:user_id>/', buscar_orcamento_por_user_id, name='buscar_orcamento_por_user_id'),
   path('orcamento/buscar-id/<int:id>/', buscar_orcamento_por_orcamento_id, name='buscar_orcamento_por_orcamento_id'),
-  path('orcamento/buscar-saldo/<int:user_id>/', buscar_saldo, name='buscar_saldo')
-]
+  path('orcamento/buscar-saldo/<int:user_id>/', buscar_saldo, name='buscar_saldo'),
+  path('movimentacao/buscar/', buscar_movimentacoes, name='buscar_movimentacoes'),
+  path('movimentacao/criar/gasto/', registrar_gasto, name='registrar_gasto'),
+  path('movimentacao/criar/entrada/', registrar_entrada, name='registrar_entrada'),
+  path('movimentacao/buscar/orcamento_id/<int:orcamento_id>/', buscar_movimentacao_orcamento_id, name='buscar_movimentacao_orcamento_id'),
+  path('movimentacao/buscar/tipo/<str:tipo>/', buscar_movimentacao_tipo, name='buscar_movimentacao_tipo'),
+  path('movimentacao/buscar/categoria/<str:categoria>/', buscar_movimentacao_categoria, name='buscar_movimentacao_categoria'),
+  path('movimentacao/buscar/recorrente/<str:recorrente>/', buscar_movimentacao_recorrente, name='buscar_movimentacao_recorrente'),
+  path('movimentacao/deletar/<int:id>/', deletar_movimentacao, name='deletar_movimentacao'),
+  path('movimentacao/atualizar/<int:movimentacao_id>/', atualizar_movimentacao, name='atualizar_movimentacao'),
+  path('movimentacao/atualizar/<int:movimentacao_id>/', atualizar_movimentacao, name='atualizar_movimentacao'),
+  ]
