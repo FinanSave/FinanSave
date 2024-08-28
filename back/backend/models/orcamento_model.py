@@ -12,4 +12,4 @@ class Orcamento(models.Model):
 
     def __str__(self):
         return (f"Orcamento(id={self.id}, saldo={self.saldo}, "
-                f"limte_gastos={self.limte_gastos}, meta_economia={self.meta_economia})")
+                f"limte_gastos={self.limite_gastos}, meta_economia={self.meta_economia})")

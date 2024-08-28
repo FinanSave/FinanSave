@@ -11,11 +11,18 @@ class Movimentacao(models.Model):
         LAZER = "Lazer", "Lazer"
         OUTROS = "Outros", "Outros"
 
+    class Tipo(models.TextChoices):
+        ENTRADA = "Entrada", "Entrada"
+        SAIDA = "Saida", "Saida"
+
     nome = models.CharField(max_length=255)
     categoria = models.CharField(max_length=50, choices=Categoria.choices)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
+    orcamento = models.ForeignKey(Orcamento, on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=10, choices=Tipo.choices)
     quer_ser_lembrado = models.BooleanField(default=False)
     recorrente = models.BooleanField(default=False)
+    mensagem = models.CharField(max_length=255)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
 
