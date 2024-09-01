@@ -46,14 +46,16 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gray-200">
+    <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <Header className="mb-0.5"></Header>
 
-      <div className="flex w-full flex-1 items-center justify-center bg-gray-200">
+      <div className="flex w-full flex-1 items-center justify-center bg-transparent">
         {/* Main Content */}
-        <div className="w-full max-w-md rounded bg-white p-8 shadow-md">
-          <h1 className="mb-6 text-center text-3xl font-bold">Fazer login</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+          <h1 className="mb-6 text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+            Fazer login
+          </h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
                 htmlFor="login"
@@ -66,7 +68,7 @@ const LoginPage = () => {
                 name="login"
                 type="text"
                 required
-                className="mt-1 w-full rounded border border-gray-300 p-2"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
                 value={formData.login}
                 onChange={handleChange}
               />
@@ -83,7 +85,7 @@ const LoginPage = () => {
                 name="senha"
                 type="password"
                 required
-                className="mt-1 w-full rounded border border-gray-300 p-2"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
                 value={formData.senha}
                 onChange={handleChange}
               />
@@ -91,7 +93,7 @@ const LoginPage = () => {
             {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
             <button
               type="submit"
-              className="w-full rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
+              className="w-full rounded-md bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
             >
               Entrar
             </button>
@@ -99,7 +101,7 @@ const LoginPage = () => {
           <div className="mt-4 text-center">
             <button
               onClick={handleRegister}
-              className="w-full rounded bg-gray-200 px-4 py-2 font-bold text-blue-700 hover:bg-gray-300 focus:outline-none"
+              className="w-full rounded-md bg-gray-200 px-4 py-2 font-bold text-blue-700 hover:bg-gray-300 focus:outline-none"
             >
               Criar conta
             </button>

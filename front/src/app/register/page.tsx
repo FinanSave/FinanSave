@@ -121,7 +121,7 @@ const RegisterPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gray-200">
+    <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <Header className="mb-0.5">
         <button
           onClick={handleBack}
@@ -131,10 +131,12 @@ const RegisterPage = () => {
         </button>
       </Header>
 
-      <div className="flex w-full flex-1 items-center justify-center bg-gray-200">
-        <div className="w-full max-w-md rounded bg-white p-8 shadow-md">
-          <h1 className="mb-6 text-center text-3xl font-bold">Criar conta</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="flex w-full flex-1 items-center justify-center bg-transparent">
+        <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
+          <h1 className="mb-6 text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+            Criar conta
+          </h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
                 htmlFor="firstName"
@@ -147,7 +149,7 @@ const RegisterPage = () => {
                 name="firstName"
                 type="text"
                 required
-                className="mt-1 w-full rounded border border-gray-300 p-2"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
                 value={formData.firstName}
                 onChange={handleChange}
               />
@@ -164,7 +166,7 @@ const RegisterPage = () => {
                 name="lastName"
                 type="text"
                 required
-                className="mt-1 w-full rounded border border-gray-300 p-2"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
                 value={formData.lastName}
                 onChange={handleChange}
               />
@@ -181,7 +183,7 @@ const RegisterPage = () => {
                 name="username"
                 type="text"
                 required
-                className="mt-1 w-full rounded border border-gray-300 p-2"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
                 value={formData.username}
                 onChange={handleChange}
               />
@@ -203,7 +205,7 @@ const RegisterPage = () => {
                 name="password"
                 type="password"
                 required
-                className="mt-1 w-full rounded border border-gray-300 p-2"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
                 value={formData.password}
                 onChange={handleChange}
               />
@@ -225,7 +227,7 @@ const RegisterPage = () => {
                 name="email"
                 type="email"
                 required
-                className="mt-1 w-full rounded border border-gray-300 p-2"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
                 value={formData.email}
                 onChange={handleChange}
               />
@@ -260,7 +262,7 @@ const RegisterPage = () => {
             )}
             <button
               type="submit"
-              className="w-full rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
+              className="w-full rounded-md bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
             >
               Cadastrar
             </button>
@@ -268,7 +270,7 @@ const RegisterPage = () => {
           <div className="mt-4 text-center">
             <button
               onClick={handleLogin}
-              className="w-full rounded bg-gray-200 px-4 py-2 font-bold text-blue-700 hover:bg-gray-300 focus:outline-none"
+              className="w-full rounded-md bg-gray-200 px-4 py-2 font-bold text-blue-700 hover:bg-gray-300 focus:outline-none"
             >
               Fazer Login
             </button>
