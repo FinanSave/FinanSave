@@ -43,7 +43,7 @@ const IndexPage = () => {
         <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
           Gerencie suas finanças de forma fácil e eficiente
         </h1>
-        <p className="mt-4 text-3xl font-bold text-gray-800">
+        <p className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
           com nosso site intuitivo
         </p>
         <p className="mt-6 max-w-2xl text-lg text-gray-700">

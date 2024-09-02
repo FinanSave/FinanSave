@@ -3,7 +3,15 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import useAuth from '@/middlewares/auth'
-import { AiOutlineLineChart, AiOutlineEdit } from 'react-icons/ai' // Removi o AiOutlinePlusCircle
+import {
+  AiOutlineLineChart,
+  AiOutlineEdit,
+  AiOutlinePlusCircle,
+  AiOutlineMinusCircle,
+  AiOutlineDollarCircle,
+  AiOutlineBell,
+  AiOutlineFileText,
+} from 'react-icons/ai' // Removi o AiOutlinePlusCircle
 import { getOrcamento } from '@/services/orcamento.service'
 
 const HomePage = () => {
@@ -41,6 +49,26 @@ const HomePage = () => {
 
   const handleEditBudgets = () => {
     router.push('/edit-budgets')
+  }
+
+  const handleEntry = () => {
+    router.push('/entry')
+  }
+
+  const handleExpense = () => {
+    router.push('/expense')
+  }
+
+  const handleSpending = () => {
+    router.push('/spending')
+  }
+
+  const handleReminder = () => {
+    router.push('/reminder')
+  }
+
+  const handleReport = () => {
+    router.push('/report')
   }
 
   return (
@@ -86,21 +114,55 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="flex w-full max-w-4xl space-x-4">
+      <section className="grid w-full max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">
         <button
           onClick={handleCreateBudget}
-          className="flex flex-1 transform items-center justify-center space-x-2 rounded-lg bg-blue-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-700"
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-blue-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-700"
         >
-          <AiOutlineEdit className="text-xl" />{' '}
-          {/* Substituí o ícone por AiOutlineEdit para reutilizar o ícone existente */}
+          <AiOutlineEdit className="text-xl" />
           <span>Criar Orçamento</span>
         </button>
         <button
           onClick={handleEditBudgets}
-          className="flex flex-1 transform items-center justify-center space-x-2 rounded-lg bg-green-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-green-700"
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-green-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-green-700"
         >
           <AiOutlineEdit className="text-xl" />
           <span>Editar Orçamentos</span>
+        </button>
+        <button
+          onClick={handleEntry}
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-teal-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-teal-700"
+        >
+          <AiOutlinePlusCircle className="text-xl" />
+          <span>Entrada</span>
+        </button>
+        <button
+          onClick={handleExpense}
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-red-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-red-700"
+        >
+          <AiOutlineMinusCircle className="text-xl" />
+          <span>Gasto</span>
+        </button>
+        <button
+          onClick={handleSpending}
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-orange-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-orange-700"
+        >
+          <AiOutlineDollarCircle className="text-xl" />
+          <span>Despesa</span>
+        </button>
+        <button
+          onClick={handleReminder}
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-yellow-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-yellow-700"
+        >
+          <AiOutlineBell className="text-xl" />
+          <span>Lembrete</span>
+        </button>
+        <button
+          onClick={handleReport}
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-gray-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-gray-700"
+        >
+          <AiOutlineFileText className="text-xl" />
+          <span>Relatório</span>
         </button>
       </section>
     </div>
