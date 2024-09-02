@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { userLogin } from '../../services/user.service'
 import Header from '@/components/Header'
+import { ArrowBigLeft } from 'lucide-react'
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -45,9 +46,18 @@ const LoginPage = () => {
     router.push('/register')
   }
 
+  const handleBack = () => {
+    router.push('/')
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
-      <Header className="mb-0.5"></Header>
+      <Header className="mb-0.5"><button
+          onClick={handleBack}
+          className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+        >
+          <ArrowBigLeft /> <span>Voltar</span>
+        </button></Header>
 
       <div className="flex w-full flex-1 items-center justify-center bg-transparent">
         {/* Main Content */}
