@@ -133,7 +133,7 @@ const RegisterPage = () => {
 
       <div className="flex w-full flex-1 items-center justify-center bg-transparent">
         <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-          <h1 className="mb-6 text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+          <h1 className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-center text-4xl font-extrabold text-transparent">
             Criar conta
           </h1>
           <form onSubmit={handleSubmit} className="space-y-6">

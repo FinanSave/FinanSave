@@ -3,6 +3,8 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
+import { ArrowBigLeft } from 'lucide-react'
+import { criarOrcamento } from '@/services/orcamento.service'
 
 const CreateBudgetPage = () => {
   const [formData, setFormData] = useState({
@@ -19,11 +21,17 @@ const CreateBudgetPage = () => {
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
   const router = useRouter()
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index?: number,
+  ) => {
     const { name, value } = e.target
     if (name.startsWith('categoria') && index !== undefined) {
       const updatedCategorias = [...formData.categorias]
-      updatedCategorias[index][name.replace('categoria', '')] = value
+      updatedCategorias[index] = {
+        ...updatedCategorias[index],
+        [name.replace('categoria', '')]: value,
+      }
       setFormData({ ...formData, categorias: updatedCategorias })
     } else {
       setFormData({ ...formData, [name]: value })
@@ -70,9 +78,14 @@ const CreateBudgetPage = () => {
     }
   }
 
-  const handleConfirm = () => {
-    // Aqui você pode enviar os dados para o backend ou realizar qualquer ação necessária
+  const handleConfirm = async () => {
     console.log('Dados do orçamento:', formData)
+    const token = localStorage.getItem('authToken') || ''
+
+    const orcamentoCriado = await criarOrcamento(token, formData)
+
+    console.log(orcamentoCriado)
+
     router.push('/home')
   }
 
@@ -80,31 +93,31 @@ const CreateBudgetPage = () => {
     setIsConfirmationVisible(false)
   }
 
-  const handleGoBack = () => {
+  const handleBack = () => {
     router.push('/home')
   }
 
-  const addCategoria = () => {
-    setFormData({
-      ...formData,
-      categorias: [...formData.categorias, { nome: '', valor: '' }],
-    })
-  }
+  // const addCategoria = () => {
+  //   setFormData({
+  //     ...formData,
+  //     categorias: [...formData.categorias, { nome: '', valor: '' }],
+  //   })
+  // }
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <Header className="mb-0.5">
         <button
-          onClick={handleGoBack}
+          onClick={handleBack}
           className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
         >
-          Voltar
+          <ArrowBigLeft /> <span>Voltar</span>
         </button>
       </Header>
 
       <div className="flex w-full flex-1 items-center justify-center bg-transparent">
         <div className="w-full max-w-lg rounded-lg bg-white p-8 shadow-lg">
-          <h1 className="mb-6 text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+          <h1 className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-center text-4xl font-extrabold text-transparent">
             Criar Orçamento
           </h1>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -145,7 +158,9 @@ const CreateBudgetPage = () => {
                 onChange={handleChange}
               />
               {errors.limiteError && (
-                <p className="mt-1 text-sm text-red-500">{errors.limiteError}</p>
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.limiteError}
+                </p>
               )}
             </div>
             <div>
@@ -171,7 +186,7 @@ const CreateBudgetPage = () => {
               )}
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700">
                 Limites por Categoria
               </label>
@@ -200,9 +215,10 @@ const CreateBudgetPage = () => {
                 onClick={addCategoria}
                 className="mt-4 flex items-center text-blue-600 hover:text-blue-800"
               >
-                <span className="text-xl">+</span> <span className="ml-1">Adicionar Categoria</span>
+                <span className="text-xl">+</span>{' '}
+                <span className="ml-1">Adicionar Categoria</span>
               </button>
-            </div>
+            </div> */}
 
             <button
               type="submit"
@@ -229,11 +245,11 @@ const CreateBudgetPage = () => {
             <p className="mb-4 text-gray-700">
               Meta de Economia: R$ {formData.metaEconomia || '0'}
             </p>
-            {formData.categorias.map((categoria, index) => (
+            {/* {formData.categorias.map((categoria, index) => (
               <p key={index} className="mb-4 text-gray-700">
                 Categoria {categoria.nome}: R$ {categoria.valor || '0'}
               </p>
-            ))}
+            ))} */}
             <div className="flex space-x-4">
               <button
                 onClick={handleConfirm}

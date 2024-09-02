@@ -1,4 +1,4 @@
-import { jwtDecode } from 'jwt-decode'
+import { getUserIdByToken } from '@/utils/getUserIdByToken'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
@@ -14,8 +14,7 @@ const useAuth = () => {
 
   const isValidUser = (token: string) => {
     try {
-      const tokenDecoded = jwtDecode(token)
-      const id = tokenDecoded.id
+      getUserIdByToken(token)
       // Verificar user por id
       return true
     } catch (err) {
