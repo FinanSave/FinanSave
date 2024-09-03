@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { ArrowBigLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { userRegister } from '../../services/user.service'
 import Header from '@/components/Header'
@@ -127,13 +126,13 @@ const RegisterPage = () => {
           onClick={handleBack}
           className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
         >
-          <ArrowBigLeft /> <span>Voltar</span>
+          Voltar
         </button>
       </Header>
 
       <div className="flex w-full flex-1 items-center justify-center bg-transparent">
         <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-          <h1 className="mb-6 text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+          <h1 className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-center text-4xl font-extrabold text-transparent">
             Criar conta
           </h1>
           <form onSubmit={handleSubmit} className="space-y-6">

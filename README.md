@@ -19,12 +19,19 @@
       cd front/
     ```
 
-3. Instale as dependências do front:
+3. Instale as extensões recomendadas e adicione a configuração do ESLint no arquivo `settings.json`
+    ```
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+      }
+    ```
+
+4. Instale as dependências do front:
     ```
       npm install
     ```
 
-4. Rode o front no localhost:
+5. Rode o front no localhost:
     ```
       npm run dev
     ```
