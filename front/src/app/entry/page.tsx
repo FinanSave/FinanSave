@@ -1,12 +1,19 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { AiOutlinePlusCircle, AiOutlineCalendar, AiOutlineDelete } from 'react-icons/ai'
+import {
+  AiOutlinePlusCircle,
+  AiOutlineCalendar,
+  AiOutlineDelete,
+} from 'react-icons/ai'
+
 import Header from '@/components/Header'
+import BackHomeButton from '@/components/BackHomeButton'
+import useAuth from '@/middlewares/auth'
 
 const EntryPage = () => {
-  const router = useRouter()
+  useAuth()
+
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
@@ -21,7 +28,9 @@ const EntryPage = () => {
     // Simulação de busca das entradas do backend (deve ser substituído pela chamada real ao backend)
     const fetchEntries = async () => {
       try {
-        const fetchedEntries = await fetch('/api/entries').then(res => res.json())
+        const fetchedEntries = await fetch('/api/entries').then((res) =>
+          res.json(),
+        )
 
         setEntries(fetchedEntries) // Assume que o backend retorna um array de strings com os IDs ou nomes das entradas
       } catch (error) {
@@ -96,7 +105,9 @@ const EntryPage = () => {
     const selectedDate = new Date(entryDate)
     const currentDate = new Date()
     if (selectedDate <= currentDate) {
-      alert('A data é para hoje ou no passado. A entrada será registrada agora.')
+      alert(
+        'A data é para hoje ou no passado. A entrada será registrada agora.',
+      )
       // Tratar como registro imediato da entrada, integrando com o backend
     } else {
       alert('A data é futura. A entrada será agendada.')
@@ -104,7 +115,11 @@ const EntryPage = () => {
     }
 
     // Registro da entrada com base na data e valor (Aqui deve ser integrado com o backend)
-    console.log('Agendando/Registrando entrada:', { amount, entryDate, category })
+    console.log('Agendando/Registrando entrada:', {
+      amount,
+      entryDate,
+      category,
+    })
 
     // Fechar modal e resetar formulário
     handleCloseScheduleModal()
@@ -125,40 +140,35 @@ const EntryPage = () => {
     handleCloseRemoveModal()
   }
 
-  const handleGoBack = () => {
-    router.back()
-  }
-
   return (
     <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <Header className="mb-0.5">
-        <h1 className="text-3xl font-bold text-blue-700 text-center mx-auto">Gerenciar Entradas</h1>
-        <button
-          onClick={handleGoBack}
-          className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-        >
-          Voltar
-        </button>
+        <h1 className="mx-auto text-center text-3xl font-bold text-blue-700">
+          Gerenciar Entradas
+        </h1>
+        <BackHomeButton />
       </Header>
 
-      <section className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4 mt-12"> {/* Adiciona um margin-top para afastar os modais da header */}
+      <section className="mt-12 grid w-full max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">
+        {' '}
+        {/* Adiciona um margin-top para afastar os modais da header */}
         <button
           onClick={handleOpenRegisterModal}
-          className="flex items-center justify-center space-x-2 px-6 py-3 bg-teal-600 text-white font-bold rounded-lg shadow-lg hover:bg-teal-700 transition-transform transform hover:scale-105"
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-teal-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-teal-700"
         >
           <AiOutlinePlusCircle className="text-xl" />
           <span>Registrar Entradas</span>
         </button>
         <button
           onClick={handleOpenScheduleModal}
-          className="flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition-transform transform hover:scale-105"
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-blue-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-700"
         >
           <AiOutlineCalendar className="text-xl" />
           <span>Agendar Entradas</span>
         </button>
         <button
           onClick={handleOpenRemoveModal}
-          className="flex items-center justify-center space-x-2 px-6 py-3 bg-red-600 text-white font-bold rounded-lg shadow-lg hover:bg-red-700 transition-transform transform hover:scale-105"
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-red-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-red-700"
         >
           <AiOutlineDelete className="text-xl" />
           <span>Remover Entradas</span>
@@ -169,11 +179,16 @@ const EntryPage = () => {
       {isRegisterModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">Registrar Entradas</h2>
+            <h2 className="mb-4 text-xl font-semibold text-gray-800">
+              Registrar Entradas
+            </h2>
             {/* Conteúdo do Modal */}
             <form onSubmit={handleRegisterEntry}>
               <div className="mb-4">
-                <label htmlFor="entryAmount" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="entryAmount"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Valor da Entrada <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -187,7 +202,10 @@ const EntryPage = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="entryDate" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="entryDate"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Data da Entrada <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -201,7 +219,10 @@ const EntryPage = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="category"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Categoria <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -212,9 +233,13 @@ const EntryPage = () => {
                   className="mt-1 w-full rounded-md border border-gray-300 p-2"
                   required
                 >
-                  <option value="" disabled>Selecione uma categoria</option>
+                  <option value="" disabled>
+                    Selecione uma categoria
+                  </option>
                   {categories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -242,11 +267,16 @@ const EntryPage = () => {
       {isScheduleModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">Agendar Entradas</h2>
+            <h2 className="mb-4 text-xl font-semibold text-gray-800">
+              Agendar Entradas
+            </h2>
             {/* Conteúdo do Modal */}
             <form onSubmit={handleScheduleEntry}>
               <div className="mb-4">
-                <label htmlFor="entryAmount" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="entryAmount"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Valor da Entrada <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -260,7 +290,10 @@ const EntryPage = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="entryDate" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="entryDate"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Data da Entrada <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -274,7 +307,10 @@ const EntryPage = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="category"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Categoria <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -285,9 +321,13 @@ const EntryPage = () => {
                   className="mt-1 w-full rounded-md border border-gray-300 p-2"
                   required
                 >
-                  <option value="" disabled>Selecione uma categoria</option>
+                  <option value="" disabled>
+                    Selecione uma categoria
+                  </option>
                   {categories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -315,13 +355,19 @@ const EntryPage = () => {
       {isRemoveModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">Remover Entradas</h2>
+            <h2 className="mb-4 text-xl font-semibold text-gray-800">
+              Remover Entradas
+            </h2>
             {/* Conteúdo do Modal */}
             {entries.length > 0 ? (
               <form onSubmit={handleRemoveEntry}>
                 <div className="mb-4">
-                  <label htmlFor="entryId" className="block text-sm font-medium text-gray-700">
-                    Selecione a Entrada para Remover <span className="text-red-500">*</span>
+                  <label
+                    htmlFor="entryId"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Selecione a Entrada para Remover{' '}
+                    <span className="text-red-500">*</span>
                   </label>
                   <select
                     id="entryId"
@@ -331,9 +377,13 @@ const EntryPage = () => {
                     className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     required
                   >
-                    <option value="" disabled>Selecione uma entrada</option>
+                    <option value="" disabled>
+                      Selecione uma entrada
+                    </option>
                     {entries.map((entry) => (
-                      <option key={entry} value={entry}>{entry}</option>
+                      <option key={entry} value={entry}>
+                        {entry}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -355,8 +405,10 @@ const EntryPage = () => {
               </form>
             ) : (
               <div>
-                <p className="text-gray-700">Nenhuma entrada disponível para remover.</p>
-                <div className="flex justify-end space-x-4 mt-4">
+                <p className="text-gray-700">
+                  Nenhuma entrada disponível para remover.
+                </p>
+                <div className="mt-4 flex justify-end space-x-4">
                   <button
                     type="button"
                     onClick={handleCloseRemoveModal}

@@ -1,71 +1,77 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
 import Header from '@/components/Header'
+import BackHomeButton from '@/components/BackHomeButton'
+import useAuth from '@/middlewares/auth'
+import { editarOrcamento, getOrcamento } from '@/services/orcamento.service'
 
 const EditBudgetPage = () => {
-  const [budgets, setBudgets] = useState<string[]>([]) // Armazena a lista de orçamentos
-  const [selectedBudget, setSelectedBudget] = useState<string | null>(null) // Armazena o orçamento selecionado
+  useAuth()
+
+  const [balance, setBalance] = useState<number | null>(null)
+  const [expensesLimit, setExpensesLimit] = useState<number | null>(null)
+  const [spendingGoal, setSpendingGoal] = useState<number | null>(null)
+
   const [formData, setFormData] = useState({
     saldo: '',
     limite: '',
     metaEconomia: '',
-    categorias: [{ nome: '', valor: '' }],
   })
+
   const [errors, setErrors] = useState({
     saldoError: '',
     limiteError: '',
     metaEconomiaError: '',
   })
+
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    // Busca os orçamentos já criados no backend
-    const fetchBudgets = async () => {
+    const fetchBudgetData = async () => {
       try {
-        // Aqui o pessoal do backend implementará a chamada para buscar os orçamentos
-        const storedBudgets = await fetch('/api/budgets') // Exemplo de endpoint
-          .then(response => response.json())
-          .then(data => data.budgets || []);
-
-        setBudgets(storedBudgets)
+        const token = localStorage.getItem('authToken') || ''
+        const budgetData = await getOrcamento(token)
+        setBalance(budgetData.saldo)
+        setExpensesLimit(budgetData.limite_gastos)
+        setSpendingGoal(budgetData.meta_economia)
       } catch (error) {
-        console.error('Erro ao buscar orçamentos:', error)
+        console.error('Erro ao buscar os dados do orçamento:', error)
       }
     }
 
-    fetchBudgets()
+    fetchBudgetData()
   }, [])
 
-  const handleBudgetSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = e.target.value
-    setSelectedBudget(selected)
-    
-    // Aqui você carregaria os dados do orçamento selecionado do backend
-    fetch(`/api/budget/${selectedBudget}`) // Exemplo de endpoint
-      .then(response => response.json())
-      .then(data => {
-        setFormData({
-          saldo: data.saldo || '',
-          limite: data.limite || '',
-          metaEconomia: data.metaEconomia || '',
-          categorias: data.categorias || [{ nome: '', valor: '' }],
-        })
+  const formatCurrency = (value: string) => {
+    const cleanedValue = value.replace(/\D/g, '')
+    const numericValue = parseFloat(cleanedValue) / 100
+    if (!isNaN(numericValue)) {
+      return numericValue.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
       })
-      .catch(error => console.error('Erro ao carregar orçamento:', error))
+    }
+    return ''
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
+  const convertToNumber = (formattedValue: string) => {
+    const numericValue = parseFloat(
+      formattedValue.replace(/[R$.\s]/g, '').replace(',', '.'),
+    )
+    return isNaN(numericValue) ? 0 : numericValue
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    if (name.startsWith('categoria') && index !== undefined) {
-      const updatedCategorias = [...formData.categorias]
-      updatedCategorias[index][name.replace('categoria', '')] = value
-      setFormData({ ...formData, categorias: updatedCategorias })
-    } else {
-      setFormData({ ...formData, [name]: value })
-    }
+    const formattedValue = formatCurrency(value)
+
+    setFormData({
+      ...formData,
+      [name]: formattedValue,
+    })
   }
 
   const validateForm = () => {
@@ -74,20 +80,20 @@ const EditBudgetPage = () => {
     let limiteError = ''
     let metaEconomiaError = ''
 
-    // Verificação do saldo
-    if (isNaN(Number(formData.saldo)) || Number(formData.saldo) < 0) {
+    if (isNaN(convertToNumber(formData.saldo))) {
       saldoError = 'O saldo deve ser um número não negativo.'
       valid = false
     }
 
-    // Verificação do limite
-    if (formData.limite && isNaN(Number(formData.limite))) {
+    if (formData.limite && isNaN(convertToNumber(formData.limite))) {
       limiteError = 'O limite deve ser um número.'
       valid = false
     }
 
-    // Verificação da meta de economia
-    if (formData.metaEconomia && isNaN(Number(formData.metaEconomia))) {
+    if (
+      formData.metaEconomia &&
+      isNaN(convertToNumber(formData.metaEconomia))
+    ) {
       metaEconomiaError = 'A meta de economia deve ser um número.'
       valid = false
     }
@@ -108,9 +114,20 @@ const EditBudgetPage = () => {
     }
   }
 
-  const handleConfirm = () => {
-    // Aqui você pode enviar os dados para o backend ou realizar qualquer ação necessária
-    console.log('Dados do orçamento editado:', formData)
+  const handleConfirm = async () => {
+    const dataToSubmit = {
+      saldo: convertToNumber(formData.saldo).toString(),
+      limite: convertToNumber(formData.limite).toString(),
+      metaEconomia: convertToNumber(formData.metaEconomia).toString(),
+    }
+
+    console.log('Dados do orçamento para edição:', dataToSubmit)
+    const token = localStorage.getItem('authToken') || ''
+
+    const orcamentoEditado = await editarOrcamento(token, dataToSubmit)
+
+    console.log(orcamentoEditado)
+
     router.push('/home')
   }
 
@@ -118,176 +135,114 @@ const EditBudgetPage = () => {
     setIsConfirmationVisible(false)
   }
 
-  const handleGoBack = () => {
-    router.push('/home')
-  }
-
-  const addCategoria = () => {
-    setFormData({
-      ...formData,
-      categorias: [...formData.categorias, { nome: '', valor: '' }],
-    })
-  }
-
   return (
     <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <Header className="mb-0.5">
-        <button
-          onClick={handleGoBack}
-          className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-        >
-          Voltar
-        </button>
+        <BackHomeButton />
       </Header>
+
+      <section className="mb-4 mt-8 w-full max-w-lg justify-center rounded-lg bg-yellow-300 p-6 shadow-md">
+        <h2 className="text-2xl font-semibold text-gray-900">
+          Orçamento Atual
+        </h2>
+        <p className="mt-4 text-lg text-gray-800">
+          Saldo Atual:{' '}
+          {balance === null || balance === undefined
+            ? 'Não registrado ainda'
+            : `R$ ${balance}`}
+        </p>
+        <p className="mt-2 text-lg text-gray-800">
+          Limite de gastos:{' '}
+          {expensesLimit === null || expensesLimit === undefined
+            ? 'Não registrado ainda'
+            : `R$ ${expensesLimit}`}
+        </p>
+        <p className="mt-2 text-lg text-gray-800">
+          Meta de Gastos:{' '}
+          {spendingGoal === null || spendingGoal === undefined
+            ? 'Não registrado ainda'
+            : `R$ ${spendingGoal}`}
+        </p>
+      </section>
 
       <div className="flex w-full flex-1 items-center justify-center bg-transparent">
         <div className="w-full max-w-lg rounded-lg bg-white p-8 shadow-lg">
-          <h1 className="mb-6 text-center text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+          <h1 className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-center text-4xl font-extrabold text-transparent">
             Editar Orçamento
           </h1>
-          {budgets.length > 0 ? (
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
-                htmlFor="selectBudget"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                htmlFor="saldo"
+                className="block text-sm font-medium text-gray-700"
               >
-                Selecione um orçamento <span className="text-red-500">*</span>
+                Novo saldo
               </label>
-              <select
-                id="selectBudget"
-                className="w-full mb-6 rounded-md border border-gray-300 p-2"
-                value={selectedBudget || ''}
-                onChange={handleBudgetSelection}
-              >
-                <option value="" disabled>
-                  -- Escolha um orçamento --
-                </option>
-                {budgets.map((budget, index) => (
-                  <option key={index} value={budget}>
-                    {budget}
-                  </option>
-                ))}
-              </select>
-              {selectedBudget && (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label
-                      htmlFor="saldo"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Saldo Inicial <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="saldo"
-                      name="saldo"
-                      type="text"
-                      required
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                      value={formData.saldo}
-                      onChange={handleChange}
-                    />
-                    {errors.saldoError && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.saldoError}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="limite"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Limite de Gastos
-                    </label>
-                    <input
-                      id="limite"
-                      name="limite"
-                      type="text"
-                      placeholder="Opcional"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                      value={formData.limite}
-                      onChange={handleChange}
-                    />
-                    {errors.limiteError && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.limiteError}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="metaEconomia"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Meta de Economia
-                    </label>
-                    <input
-                      id="metaEconomia"
-                      name="metaEconomia"
-                      type="text"
-                      placeholder="Opcional"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                      value={formData.metaEconomia}
-                      onChange={handleChange}
-                    />
-                    {errors.metaEconomiaError && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {errors.metaEconomiaError}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Limites por Categoria 
-                    </label>
-                    {formData.categorias.map((categoria, index) => (
-                      <div
-                        key={index}
-                        className="mt-2 flex items-center space-x-4"
-                      >
-                        <input
-                          name={`categoriaNome${index}`}
-                          type="text"
-                          placeholder="Nome da Categoria (Opcional)"
-                          className="w-full rounded-md border border-gray-300 p-2"
-                          value={categoria.nome}
-                          onChange={(e) => handleChange(e, index)}
-                        />
-                        <input
-                          name={`categoriaValor${index}`}
-                          type="text"
-                          placeholder="Limite (Opcional)"
-                          className="w-full rounded-md border border-gray-300 p-2"
-                          value={categoria.valor}
-                          onChange={(e) => handleChange(e, index)}
-                        />
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={addCategoria}
-                      className="mt-4 flex items-center text-blue-600 hover:text-blue-800"
-                    >
-                      <span className="text-xl">+</span>{' '}
-                      <span className="ml-1">Adicionar Categoria</span>
-                    </button>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full rounded-md bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
-                  >
-                    Confirmar Edição
-                  </button>
-                </form>
+              <input
+                id="saldo"
+                name="saldo"
+                type="text"
+                placeholder="Opcional"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                value={formData.saldo}
+                onChange={handleChange}
+              />
+              {errors.saldoError && (
+                <p className="mt-1 text-sm text-red-500">{errors.saldoError}</p>
               )}
             </div>
-          ) : (
-            <p className="text-center text-xl font-semibold text-red-500">
-              Nenhum orçamento encontrado. Crie um novo orçamento primeiro.
-            </p>
-          )}
+            <div>
+              <label
+                htmlFor="limite"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Limite de Gastos
+              </label>
+              <input
+                id="limite"
+                name="limite"
+                type="text"
+                placeholder="Opcional"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                value={formData.limite}
+                onChange={handleChange}
+              />
+              {errors.limiteError && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.limiteError}
+                </p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="metaEconomia"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Meta de Economia
+              </label>
+              <input
+                id="metaEconomia"
+                name="metaEconomia"
+                type="text"
+                placeholder="Opcional"
+                className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                value={formData.metaEconomia}
+                onChange={handleChange}
+              />
+              {errors.metaEconomiaError && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.metaEconomiaError}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full rounded-md bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
+            >
+              Confirmar
+            </button>
+          </form>
         </div>
       </div>
 
@@ -297,19 +252,16 @@ const EditBudgetPage = () => {
             <h2 className="mb-4 text-xl font-semibold text-gray-800">
               Confirmar Edição de Orçamento
             </h2>
-            <p className="mb-4 text-gray-700">Saldo Inicial: R$ {formData.saldo}</p>
             <p className="mb-4 text-gray-700">
-              Limite de Gastos: R$ {formData.limite || '0'}
+              Novo saldo: {formData.saldo || 'R$ 0,00'}
             </p>
             <p className="mb-4 text-gray-700">
-              Meta de Economia: R$ {formData.metaEconomia || '0'}
+              Limite de Gastos: {formData.limite || 'R$ 0,00'}
             </p>
-            {formData.categorias.map((categoria, index) => (
-              <p key={index} className="mb-4 text-gray-700">
-                Categoria {categoria.nome}: R$ {categoria.valor || '0'}
-              </p>
-            ))}
-            <div className="flex space-x-4">
+            <p className="mb-4 text-gray-700">
+              Meta de Economia: {formData.metaEconomia || 'R$ 0,00'}
+            </p>
+            <div className="flex justify-end space-x-4">
               <button
                 onClick={handleConfirm}
                 className="w-full rounded-md bg-green-600 px-4 py-2 font-bold text-white hover:bg-green-700 focus:outline-none"

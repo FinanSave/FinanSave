@@ -11,8 +11,9 @@ import {
   AiOutlineDollarCircle,
   AiOutlineBell,
   AiOutlineFileText,
-} from 'react-icons/ai' // Removi o AiOutlinePlusCircle
+} from 'react-icons/ai'
 import { getOrcamento } from '@/services/orcamento.service'
+import { LogOut } from 'lucide-react'
 
 const HomePage = () => {
   const router = useRouter()
@@ -24,19 +25,20 @@ const HomePage = () => {
   const [spendingGoal, setSpendingGoal] = useState<number | null>(null)
 
   useEffect(() => {
-    // Simulação de busca dos dados do backend
     const fetchBudgetData = async () => {
       try {
         const token = localStorage.getItem('authToken') || ''
         const budgetData = await getOrcamento(token)
 
-        console.log('Dados do orçamento:', budgetData)
+        // console.log('Dados do orçamento:', budgetData)
 
         setBalance(budgetData.saldo)
         setExpensesLimit(budgetData.limite_gastos)
         setSpendingGoal(budgetData.meta_economia)
+        localStorage.setItem('hasBudget', 'true')
       } catch (error) {
         console.error('Erro ao buscar os dados do orçamento:', error)
+        localStorage.setItem('hasBudget', 'false')
       }
     }
 
@@ -71,13 +73,23 @@ const HomePage = () => {
     router.push('/report')
   }
 
+  const handleLogOff = () => {
+    router.push('/')
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-start bg-gray-50 p-8">
-      <header className="mb-8 w-full max-w-4xl">
+      <div className="mb-8 flex w-full items-center justify-between">
         <h1 className="text-3xl font-bold text-blue-700">
           👋 Bem-vindo ao Finansave
         </h1>
-      </header>
+        <button
+          onClick={handleLogOff}
+          className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+        >
+          <LogOut /> <span>Logout</span>
+        </button>
+      </div>
 
       <section className="mb-8 w-full max-w-4xl rounded-lg bg-yellow-300 p-6 shadow-md">
         <h2 className="text-2xl font-semibold text-gray-900">Seu Orçamento</h2>

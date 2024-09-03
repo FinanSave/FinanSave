@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { userLogin } from '../../services/user.service'
 import Header from '@/components/Header'
-import { ArrowBigLeft } from 'lucide-react'
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -57,7 +56,7 @@ const LoginPage = () => {
           onClick={handleBack}
           className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
         >
-          <ArrowBigLeft /> <span>Voltar</span>
+          Voltar
         </button>
       </Header>
 

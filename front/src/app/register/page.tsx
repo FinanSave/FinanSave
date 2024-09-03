@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { ArrowBigLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { userRegister } from '../../services/user.service'
 import Header from '@/components/Header'
@@ -127,7 +126,7 @@ const RegisterPage = () => {
           onClick={handleBack}
           className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
         >
-          <ArrowBigLeft /> <span>Voltar</span>
+          Voltar
         </button>
       </Header>
 

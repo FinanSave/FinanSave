@@ -9,7 +9,7 @@ class ControladorOrcamento:
         self.repositorio_orcamentos = RepositorioOrcamento()
 
     def criar_orcamento(self, user_id, saldo, limite_gastos, meta_economia):
-        if not all([saldo, user_id, limite_gastos, meta_economia]):
+        if any(value is None for value in [user_id, saldo, limite_gastos, meta_economia]):
             raise ValueError("Todos os campos são obrigatórios")
     
         return self.repositorio_orcamentos.criar_orcamento(user_id, saldo, limite_gastos, meta_economia)

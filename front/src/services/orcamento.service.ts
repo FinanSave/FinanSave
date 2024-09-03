@@ -27,8 +27,8 @@ export async function criarOrcamento(
       meta_economia: Number(formData.metaEconomia),
     }
 
-    await backendAPI.post('criar/', requestData)
-    return true
+    const orcamentoCriado = await backendAPI.post('criar/', requestData)
+    return orcamentoCriado
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Erro ao criar orçamento >>', error.response?.data.error)
@@ -52,5 +52,33 @@ export async function getOrcamento(token: string) {
       console.error('Erro inesperado >>', String(error))
     }
     return null
+  }
+}
+
+export async function editarOrcamento(
+  token: string,
+  formData: OrcamentoFormData,
+) {
+  const userId = getUserIdByToken(token)
+
+  try {
+    const requestData = {
+      saldo: Number(formData.saldo),
+      limite_gastos: Number(formData.limite),
+      meta_economia: Number(formData.metaEconomia),
+    }
+
+    const orcamentoEditado = await backendAPI.put(
+      `atualizar/${userId}/`,
+      requestData,
+    )
+    return orcamentoEditado
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Erro ao editar orçamento >>', error.response?.data.error)
+    } else {
+      console.error('Erro inesperado >>', String(error))
+    }
+    return false
   }
 }
