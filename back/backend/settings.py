@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',     # Sistema de mensagens
     'django.contrib.staticfiles',  # Gerencia arquivos estáticos
     'corsheaders',                 # Habilita o CORS
+    'rest_framework',              # Framework para APIs REST
 ]
 
 MIDDLEWARE = [
