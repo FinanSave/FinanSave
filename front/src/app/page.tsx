@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import { AiOutlineGift, AiOutlineDollarCircle } from 'react-icons/ai'
 
-const IndexPage = () => {
+const IndexPage: React.FC = () => {
   const router = useRouter()
 
   useEffect(() => {
+    // Limpa o token de autenticação, se houver
     localStorage.removeItem('authToken')
   }, [])
 
@@ -24,18 +25,20 @@ const IndexPage = () => {
     <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       {/* Header */}
       <Header>
-        <button
-          onClick={handleRegister}
-          className="py-2 font-semibold text-gray-700 hover:underline"
-        >
-          Criar conta
-        </button>
-        <button
-          onClick={handleLogin}
-          className="rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-        >
-          Fazer login
-        </button>
+        <div className="flex space-x-4">
+          <button
+            onClick={handleRegister}
+            className="py-2 font-semibold text-gray-700 hover:underline"
+          >
+            Criar conta
+          </button>
+          <button
+            onClick={handleLogin}
+            className="rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+          >
+            Fazer login
+          </button>
+        </div>
       </Header>
 
       {/* Main Content */}
