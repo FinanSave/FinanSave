@@ -23,8 +23,9 @@ class Movimentacao(models.Model):
     quer_ser_lembrado = models.BooleanField(default=False)
     recorrente = models.BooleanField(default=False)
     mensagem = models.CharField(max_length=255)
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(default=timezone.now)
+    data_movimentacao = models.DateField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.nome} - {self.categoria} - R${self.valor:.2f}"

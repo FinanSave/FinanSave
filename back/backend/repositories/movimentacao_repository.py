@@ -5,9 +5,19 @@ from django.utils import timezone
 class RepositorioMovimentacao:
     
     @staticmethod
-    def criar_movimentacao(nome, categoria, orcamento_id, tipo, valor, quer_ser_lembrado, recorrente, mensagem):
+    def criar_movimentacao(nome, categoria, orcamento_id, tipo, valor, data_movimentacao, quer_ser_lembrado, recorrente, mensagem):
         if Orcamento.objects.filter(id = orcamento_id).exists():
-            movimentacao = Movimentacao.objects.create(nome = nome, categoria = categoria, orcamento_id = orcamento_id, tipo = tipo, valor = valor, quer_ser_lembrado = quer_ser_lembrado, recorrente = recorrente, mensagem = mensagem)
+            movimentacao = Movimentacao.objects.create(
+                nome = nome, 
+                categoria = categoria, 
+                orcamento_id = orcamento_id, 
+                tipo = tipo, 
+                valor = valor, 
+                data_movimentacao=data_movimentacao,
+                quer_ser_lembrado = quer_ser_lembrado, 
+                recorrente = recorrente, 
+                mensagem = mensagem
+                )
             return movimentacao
         else:
             return "Orçamento não encontrado"
@@ -37,7 +47,7 @@ class RepositorioMovimentacao:
         return Movimentacao.objects.filter(recorrente = recorrente)
 
     @staticmethod
-    def atualizar_movimentacao(movimentacao_id, nome=None, categoria=None, tipo=None, valor=None, quer_ser_lembrado=None, recorrente=None):
+    def atualizar_movimentacao(movimentacao_id, nome=None, categoria=None, tipo=None, valor=None, data_movimentacao=None, quer_ser_lembrado=None, recorrente=None):
         movimentacao = Movimentacao.objects.filter(id=movimentacao_id).first()
         if movimentacao: # caso o objeto seja encontrado/exista
             if nome:
@@ -48,6 +58,8 @@ class RepositorioMovimentacao:
                 movimentacao.tipo = tipo
             if valor:
                 movimentacao.valor = valor
+            if data_movimentacao:
+                movimentacao.data_movimentacao = data_movimentacao
             if quer_ser_lembrado:
                 movimentacao.quer_ser_lembrado = quer_ser_lembrado
             if recorrente:

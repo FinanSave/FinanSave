@@ -6,44 +6,6 @@ from backend.controllers.movimentacao_controller import ControladorMovimentacao
 controlador_movimentacao = ControladorMovimentacao()
 
 @csrf_exempt
-def criar_movimentacao(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-            nome = data.get('nome')
-            categoria = data.get('categoria')
-            orcamento = data.get('orcamento')
-            tipo = data.get('tipo')
-            valor = data.get('valor')
-            data_movimentacao = data.get('data')
-            quer_ser_lembrado = data.get('quer_ser_lembrado', False)
-            recorrente = data.get('recorrente', False)
-
-            movimentacao = controlador_movimentacao.criar_movimentacao(
-                nome, categoria, orcamento, tipo, valor, data_movimentacao, quer_ser_lembrado, recorrente
-            )
-            return JsonResponse({
-                "message": "Movimentação criada com sucesso",
-                "movimentacao": {
-                    "id": movimentacao.id,
-                    "nome": movimentacao.nome,
-                    "categoria": movimentacao.categoria,
-                    "orcamento": movimentacao.orcamento,
-                    "tipo": movimentacao.tipo,
-                    "valor": movimentacao.valor,
-                    "data": movimentacao.created_at,
-                    "quer_ser_lembrado": movimentacao.quer_ser_lembrado,
-                    "recorrente": movimentacao.recorrente
-                }
-            }, status=201)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido"}, status=400)
-        except ValueError as e:
-            return JsonResponse({"error": str(e)}, status=400)
-
-    return JsonResponse({"error": "Método não permitido"}, status=405)
-
-@csrf_exempt
 def atualizar_movimentacao(request, movimentacao_id):
     if request.method == "PUT":
         try:
@@ -52,11 +14,12 @@ def atualizar_movimentacao(request, movimentacao_id):
             categoria = data.get('categoria')
             tipo = data.get('tipo')
             valor = data.get('valor')
+            data_movimentacao = data.get('data_movimentacao')
             quer_ser_lembrado = data.get('quer_ser_lembrado', False)
             recorrente = data.get('recorrente', False)
 
             movimentacao = controlador_movimentacao.atualizar_movimentacao(
-                movimentacao_id, nome, categoria, tipo, valor, quer_ser_lembrado, recorrente
+                movimentacao_id, nome, categoria, tipo, valor, data_movimentacao, quer_ser_lembrado, recorrente
             )
             if movimentacao:
                 return JsonResponse({
@@ -68,6 +31,7 @@ def atualizar_movimentacao(request, movimentacao_id):
                         "orcamento": movimentacao.orcamento_id,
                         "tipo": movimentacao.tipo,
                         "valor": movimentacao.valor,
+                        "data_movimentacao": movimentacao.data_movimentacao,
                         "quer_ser_lembrado": movimentacao.quer_ser_lembrado,
                         "recorrente": movimentacao.recorrente,
                         "created_at": movimentacao.created_at,
@@ -184,7 +148,7 @@ def buscar_movimentacao_orcamento_id(request, orcamento_id):
                     "id": m.id,
                     "nome": m.nome,
                     "categoria": m.categoria,
-                    "orcamento": m.orcamento.id,  # assumindo que orcamento é uma FK e tem um ID
+                    "orcamento": m.orcamento.id,
                     "tipo": m.tipo,
                     "valor": m.valor,
                     "data": m.created_at,
@@ -249,6 +213,7 @@ def registrar_entrada(request):
             categoria = data.get('categoria')
             user_id = data.get('user_id')
             valor = data.get('valor')
+            data_movimentacao = data.get('data_movimentacao')
             quer_ser_lembrado = data.get('quer_ser_lembrado', False)
             recorrente = data.get('recorrente', False)
             mensagem = data.get('mensagem', " ")
@@ -258,6 +223,7 @@ def registrar_entrada(request):
                 categoria=categoria,
                 user_id=user_id,
                 valor=valor,
+                data_movimentacao=data_movimentacao,
                 quer_ser_lembrado=quer_ser_lembrado,
                 recorrente=recorrente,
                 mensagem=mensagem
@@ -270,6 +236,7 @@ def registrar_entrada(request):
                     "nome": movimentacao.nome,
                     "categoria": movimentacao.categoria,
                     "valor": str(movimentacao.valor),
+                    "data_movimentacao": movimentacao.data_movimentacao,
                     "tipo": movimentacao.tipo,
                     "mensagem": movimentacao.mensagem
                 }
