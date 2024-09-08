@@ -22,7 +22,7 @@ class Movimentacao(models.Model):
     tipo = models.CharField(max_length=10, choices=Tipo.choices)
     quer_ser_lembrado = models.BooleanField(default=False)
     recorrente = models.BooleanField(default=False)
-    mensagem = models.CharField(max_length=255)
+    mensagem = models.CharField(max_length=255, blank=True, null=True)
     data_movimentacao = models.DateField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

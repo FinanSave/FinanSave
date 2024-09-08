@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from backend.controllers.movimentacao_controller import ControladorMovimentacao
@@ -67,12 +68,13 @@ def buscar_movimentacoes(request):
                 "id": m.id,
                 "nome": m.nome,
                 "categoria": m.categoria,
-                "orcamento": m.orcamento.id,
+                "orcamento_id": m.orcamento.id,
                 "tipo": m.tipo,
                 "valor": m.valor,
-                "data": m.created_at,
+                "data_movimentacao": m.data_movimentacao,
                 "quer_ser_lembrado": m.quer_ser_lembrado,
-                "recorrente": m.recorrente
+                "recorrente": m.recorrente,
+                "mensagem": m.mensagem
             } for m in movimentacoes
         ]
         return JsonResponse(movimentacoes_data, safe=False)
@@ -87,10 +89,10 @@ def buscar_movimentacao_tipo(request, tipo):
                 "id": m.id,
                 "nome": m.nome,
                 "categoria": m.categoria,
-                "orcamento": m.orcamento.id,
+                "orcamento_id": m.orcamento.id,
                 "tipo": m.tipo,
                 "valor": m.valor,
-                "data": m.created_at,
+                "data_movimentacao": m.data_movimentacao,
                 "quer_ser_lembrado": m.quer_ser_lembrado,
                 "recorrente": m.recorrente
             } for m in movimentacoes
@@ -107,10 +109,10 @@ def buscar_movimentacao_categoria(request, categoria):
                 "id": m.id,
                 "nome": m.nome,
                 "categoria": m.categoria,
-                "orcamento": m.orcamento.id,
+                "orcamento_id": m.orcamento.id,
                 "tipo": m.tipo,
                 "valor": m.valor,
-                "data": m.created_at,
+                "data_movimentacao": m.data_movimentacao,
                 "quer_ser_lembrado": m.quer_ser_lembrado,
                 "recorrente": m.recorrente
             } for m in movimentacoes
@@ -127,10 +129,10 @@ def buscar_movimentacao_recorrente(request, recorrente):
                 "id": m.id,
                 "nome": m.nome,
                 "categoria": m.categoria,
-                "orcamento": m.orcamento.id,
+                "orcamento_id": m.orcamento.id,
                 "tipo": m.tipo,
                 "valor": m.valor,
-                "data": m.created_at,
+                "data_movimentacao": m.data_movimentacao,
                 "quer_ser_lembrado": m.quer_ser_lembrado,
                 "recorrente": m.recorrente
             } for m in movimentacoes
@@ -148,12 +150,13 @@ def buscar_movimentacao_orcamento_id(request, orcamento_id):
                     "id": m.id,
                     "nome": m.nome,
                     "categoria": m.categoria,
-                    "orcamento": m.orcamento.id,
+                    "orcamento_id": m.orcamento.id,
                     "tipo": m.tipo,
                     "valor": m.valor,
-                    "data": m.created_at,
+                    "data_movimentacao": m.data_movimentacao,
                     "quer_ser_lembrado": m.quer_ser_lembrado,
-                    "recorrente": m.recorrente
+                    "recorrente": m.recorrente,
+                    "mensagem": m.mensagem
                 } for m in movimentacoes
             ]
             return JsonResponse(movimentacoes_data, safe=False, status=200)
@@ -171,15 +174,20 @@ def registrar_gasto(request):
             categoria = data.get('categoria')
             user_id = data.get('user_id')
             valor = data.get('valor')
+            data_movimentacao = data.get('data_movimentacao')
             quer_ser_lembrado = data.get('quer_ser_lembrado', False)
             recorrente = data.get('recorrente', False)
             mensagem = data.get('mensagem', " ")
+
+            # Converte o valor para Decimal
+            valor = Decimal(valor)
 
             movimentacao = controlador_movimentacao.registrar_gasto(
                 nome=nome,
                 categoria=categoria,
                 user_id=user_id,
                 valor=valor,
+                data_movimentacao=data_movimentacao,
                 quer_ser_lembrado=quer_ser_lembrado,
                 recorrente=recorrente,
                 mensagem=mensagem
@@ -216,7 +224,10 @@ def registrar_entrada(request):
             data_movimentacao = data.get('data_movimentacao')
             quer_ser_lembrado = data.get('quer_ser_lembrado', False)
             recorrente = data.get('recorrente', False)
-            mensagem = data.get('mensagem', " ")
+            mensagem = data.get('mensagem')
+
+            # Converte o valor para Decimal
+            valor = Decimal(valor)
 
             movimentacao = controlador_movimentacao.registrar_entrada(
                 nome=nome,

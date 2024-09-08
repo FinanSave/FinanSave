@@ -132,6 +132,6 @@ def buscar_orcamento_por_orcamento_id(request, id):
         "limite_gastos": orcamento.limite_gastos,
         "meta_economia": orcamento.meta_economia
       })
-    return JsonResponse({"orcamento": orcamento}, safe=False)
+    return JsonResponse({"error": "Orçamento não encontrado"}, status=404)
 
   return JsonResponse({"error": "Método não permitido"}, status=405)
