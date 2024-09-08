@@ -28,14 +28,31 @@ class ControladorMovimentacao:
     def buscar_movimentacao_recorrente(self, recorrente): #Busca de uma movimentação através da recorrencia
         return self.repositorio_movimentacoes.buscar_movimentacao_recorrente(recorrente)
 
-    def atualizar_movimentacao(self, movimentacao_id, nome, categoria, tipo, valor, quer_ser_lembrado, recorrente):
-        return self.repositorio_movimentacoes.atualizar_movimentacao(movimentacao_id, nome, categoria, tipo, valor, quer_ser_lembrado, recorrente)
+    def atualizar_movimentacao(self, movimentacao_id, nome, categoria, tipo, valor, data_movimentacao, quer_ser_lembrado, recorrente):
+        return self.repositorio_movimentacoes.atualizar_movimentacao(movimentacao_id, nome, categoria, tipo, valor, data_movimentacao, quer_ser_lembrado, recorrente)
                                                                     
     def deletar_movimentacao(self, id):
+        movimentacao = self.repositorio_movimentacoes.buscar_movimentacao_id(id)
+
+        if not movimentacao:
+            raise ValueError("Movimentação não encontrada")
+
+        orcamento = self.repositorio_orcamento.buscar_orcamento_por_id(movimentacao.orcamento.id)
+
+        if orcamento:
+            if movimentacao.tipo == 'Saida':
+                orcamento.saldo += movimentacao.valor
+            elif movimentacao.tipo == 'Entrada':
+                orcamento.saldo -= movimentacao.valor
+            else:
+                raise ValueError("Tipo de movimentação inválido")
+
+            orcamento.save()
+
         return self.repositorio_movimentacoes.deletar_movimentacao(id)
     
     # vai receber o user_id para achar o orçamento através dele
-    def registrar_gasto(self, nome, categoria, user_id, valor, quer_ser_lembrado=None, recorrente=None, mensagem=None):
+    def registrar_gasto(self, nome, categoria, user_id, valor, data_movimentacao, quer_ser_lembrado=None, recorrente=None, mensagem=None):
         orcamento = self.repositorio_orcamento.buscar_orcamento_por_user_id(user_id)
         if not orcamento:
             raise ValueError("Orçamento não encontrado")
@@ -49,6 +66,7 @@ class ControladorMovimentacao:
             orcamento_id=orcamento.id,
             tipo='Saida',
             valor=valor,
+            data_movimentacao=data_movimentacao,
             quer_ser_lembrado=quer_ser_lembrado,
             recorrente=recorrente,
             mensagem=mensagem
@@ -65,7 +83,7 @@ class ControladorMovimentacao:
 
         return movimentacao
 
-    def registrar_entrada(self, nome, categoria, user_id, valor, quer_ser_lembrado=None, recorrente=None, mensagem=None):
+    def registrar_entrada(self, nome, categoria, user_id, valor, data_movimentacao, quer_ser_lembrado=None, recorrente=None, mensagem=None):
         orcamento = self.repositorio_orcamento.buscar_orcamento_por_user_id(user_id)
         if not orcamento:
             raise ValueError("Orçamento não encontrado")
@@ -76,6 +94,7 @@ class ControladorMovimentacao:
             orcamento_id=orcamento.id,
             tipo='Entrada',
             valor=valor,
+            data_movimentacao=data_movimentacao,
             quer_ser_lembrado=quer_ser_lembrado,
             recorrente=recorrente,
             mensagem=mensagem

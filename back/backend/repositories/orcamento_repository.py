@@ -11,6 +11,10 @@ class RepositorioOrcamento:
       return Orcamento.objects.all()
     
     @staticmethod
+    def buscar_orcamento_por_id(orcamento_id):
+      return Orcamento.objects.filter(id=orcamento_id).first()
+
+    @staticmethod
     def buscar_orcamento_por_user_id(user_id):
       return Orcamento.objects.filter(user_id=user_id).first()
 
@@ -29,7 +33,7 @@ class RepositorioOrcamento:
     
     @staticmethod
     def buscar_orcamento_por_orcamento_id(id):
-      return Orcamento.objects.filter(id==id).first()
+        return Orcamento.objects.filter(id=id).first()
     
     @staticmethod
     def deletar_orcamento(user_id):

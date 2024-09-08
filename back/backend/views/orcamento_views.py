@@ -17,22 +17,24 @@ def criar_orcamento(request):
       meta_economia = data.get('meta_economia')
 
       try:
+        # Verifica se o usuário já possui um orçamento
+        orcamento_existente = controlador_orcamento.buscar_orcamento_por_user_id(user_id)
+        if orcamento_existente:
+          return JsonResponse({"error": "Usuário já possui um orçamento."}, status=400)
+
         orcamento = controlador_orcamento.criar_orcamento(user_id, saldo, limite_gastos, meta_economia)
         return JsonResponse({
-            "message": 'Orçamento criado com sucesso',
-            "orcamento": {
-                "id": orcamento.id,
-                "user_id": orcamento.user_id,
-                "saldo": orcamento.saldo,
-                "limite_gastos": orcamento.limite_gastos,
-                "meta_economia": orcamento.meta_economia
-            }
+          "message": 'Orçamento criado com sucesso',
+          "orcamento": {
+              "id": orcamento.id,
+              "user_id": orcamento.user_id,
+              "saldo": orcamento.saldo,
+              "limite_gastos": orcamento.limite_gastos,
+              "meta_economia": orcamento.meta_economia
+          }
         }, status=201)
       except IntegrityError as e:
-        if 'UNIQUE constraint failed' in str(e):
-            return JsonResponse({"error": "Orçamento já existente."}, status=400)
-        else:
-            return JsonResponse({"error": "Erro inesperado ao criar orçamento."}, status=500)
+        return JsonResponse({"error": "Erro inesperado ao criar orçamento."}, status=500)
     except json.JSONDecodeError:
         return JsonResponse({"error": "JSON inválido"}, status=400)
 
@@ -130,6 +132,6 @@ def buscar_orcamento_por_orcamento_id(request, id):
         "limite_gastos": orcamento.limite_gastos,
         "meta_economia": orcamento.meta_economia
       })
-    return JsonResponse({"orcamento": orcamento}, safe=False)
+    return JsonResponse({"error": "Orçamento não encontrado"}, status=404)
 
   return JsonResponse({"error": "Método não permitido"}, status=405)
