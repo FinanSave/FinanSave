@@ -1,41 +1,48 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import {
-  AiOutlinePlusCircle,
-  AiOutlineCalendar,
-  AiOutlineDelete,
-} from 'react-icons/ai'
+import { AiOutlinePlusCircle, AiOutlineDelete } from 'react-icons/ai'
 
 import Header from '@/components/Header'
 import BackHomeButton from '@/components/BackHomeButton'
 import useAuth from '@/middlewares/auth'
+import { buscarMovimentacaoTipo } from '@/services/movimentacao.service'
 
 const EntryPage = () => {
   useAuth()
 
+  interface Entry {
+    id: number
+    nome: string
+    categoria: string
+    orcamento_id: number
+    tipo: string
+    valor: string
+    data_movimentacao: string
+    quer_ser_lembrado: boolean
+    recorrente: boolean
+  }
+
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
-  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
-  const [entries, setEntries] = useState<string[]>([]) // Armazena as entradas recuperadas do backend
+  const [entries, setEntries] = useState<Entry[]>([])
   const [selectedEntry, setSelectedEntry] = useState<string>('')
   const [entryAmount, setEntryAmount] = useState<string>('')
   const [entryDate, setEntryDate] = useState<string>('')
   const [category, setCategory] = useState<string>('')
-  const categories = ['Salário', 'Freelance', 'Investimentos', 'Outros'] // Exemplo de lista de categorias
+  const categories = ['Transporte', 'Comida', 'Roupas', 'Lazer', 'Outros']
 
   useEffect(() => {
-    // Simulação de busca das entradas do backend (deve ser substituído pela chamada real ao backend)
     const fetchEntries = async () => {
       try {
-        const fetchedEntries = await fetch('/api/entries').then((res) =>
-          res.json(),
-        )
+        const token = localStorage.getItem('authToken') || ''
+        const entries = await buscarMovimentacaoTipo('Entrada', token)
+        console.log('Response from API:', entries)
 
-        setEntries(fetchedEntries) // Assume que o backend retorna um array de strings com os IDs ou nomes das entradas
+        setEntries(entries)
       } catch (error) {
         console.error('Erro ao buscar entradas:', error)
-        setEntries([]) // Em caso de erro, define as entradas como uma lista vazia
+        setEntries([])
       }
     }
 
@@ -48,15 +55,6 @@ const EntryPage = () => {
 
   const handleCloseRegisterModal = () => {
     setIsRegisterModalOpen(false)
-    resetForm()
-  }
-
-  const handleOpenScheduleModal = () => {
-    setIsScheduleModalOpen(true)
-  }
-
-  const handleCloseScheduleModal = () => {
-    setIsScheduleModalOpen(false)
     resetForm()
   }
 
@@ -74,6 +72,24 @@ const EntryPage = () => {
     setCategory('')
   }
 
+  // Função para formatar o valor para "R$xxx,xx"
+  const formatCurrency = (value: string) => {
+    return Number(value).toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    })
+  }
+
+  // Função para formatar a data para "DD/MM/AAAA"
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+  }
+
   const handleRegisterEntry = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -89,40 +105,6 @@ const EntryPage = () => {
 
     // Fechar modal e resetar formulário
     handleCloseRegisterModal()
-  }
-
-  const handleScheduleEntry = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    // Validação do valor da entrada (Extensão 2a)
-    const amount = parseFloat(entryAmount)
-    if (isNaN(amount) || amount <= 0) {
-      alert('Por favor, insira um valor válido para a entrada.')
-      return
-    }
-
-    // Validação da data da entrada (Extensões 3a e 3b)
-    const selectedDate = new Date(entryDate)
-    const currentDate = new Date()
-    if (selectedDate <= currentDate) {
-      alert(
-        'A data é para hoje ou no passado. A entrada será registrada agora.',
-      )
-      // Tratar como registro imediato da entrada, integrando com o backend
-    } else {
-      alert('A data é futura. A entrada será agendada.')
-      // Tratar como agendamento da entrada, integrando com o backend
-    }
-
-    // Registro da entrada com base na data e valor (Aqui deve ser integrado com o backend)
-    console.log('Agendando/Registrando entrada:', {
-      amount,
-      entryDate,
-      category,
-    })
-
-    // Fechar modal e resetar formulário
-    handleCloseScheduleModal()
   }
 
   const handleRemoveEntry = (e: React.FormEvent<HTMLFormElement>) => {
@@ -158,13 +140,6 @@ const EntryPage = () => {
         >
           <AiOutlinePlusCircle className="text-xl" />
           <span>Registrar Entradas</span>
-        </button>
-        <button
-          onClick={handleOpenScheduleModal}
-          className="flex transform items-center justify-center space-x-2 rounded-lg bg-blue-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-700"
-        >
-          <AiOutlineCalendar className="text-xl" />
-          <span>Agendar Entradas</span>
         </button>
         <button
           onClick={handleOpenRemoveModal}
@@ -263,94 +238,6 @@ const EntryPage = () => {
         </div>
       )}
 
-      {/* Modal para Agendar Entradas */}
-      {isScheduleModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">
-              Agendar Entradas
-            </h2>
-            {/* Conteúdo do Modal */}
-            <form onSubmit={handleScheduleEntry}>
-              <div className="mb-4">
-                <label
-                  htmlFor="entryAmount"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Valor da Entrada <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="entryAmount"
-                  name="entryAmount"
-                  type="number"
-                  value={entryAmount}
-                  onChange={(e) => setEntryAmount(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="entryDate"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Data da Entrada <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="entryDate"
-                  name="entryDate"
-                  type="date"
-                  value={entryDate}
-                  onChange={(e) => setEntryDate(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="category"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Categoria <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                  required
-                >
-                  <option value="" disabled>
-                    Selecione uma categoria
-                  </option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={handleCloseScheduleModal}
-                  className="rounded-md bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-                >
-                  Confirmar Entrada
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       {/* Modal para Remover Entradas */}
       {isRemoveModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -381,8 +268,8 @@ const EntryPage = () => {
                       Selecione uma entrada
                     </option>
                     {entries.map((entry) => (
-                      <option key={entry} value={entry}>
-                        {entry}
+                      <option key={entry.id} value={entry.nome}>
+                        {entry.nome}
                       </option>
                     ))}
                   </select>
@@ -422,6 +309,41 @@ const EntryPage = () => {
           </div>
         </div>
       )}
+
+      <div>
+        <h1 className="mx-auto mt-12 text-center text-2xl font-bold text-blue-700">
+          Entradas
+        </h1>
+        {entries.length > 0 ? (
+          <table border={1} cellPadding="10" cellSpacing="1">
+            <thead>
+              <tr className="text-slate-800">
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Data da Movimentação</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entries.map((entry) => (
+                <tr
+                  className="mx-auto text-center text-slate-800"
+                  key={entry.id}
+                >
+                  <td>{entry.id}</td>
+                  <td>{entry.nome}</td>
+                  <td>{entry.categoria}</td>
+                  <td>{formatDate(entry.data_movimentacao)}</td>
+                  <td>{formatCurrency(entry.valor)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Nenhuma movimentação encontrada</p>
+        )}
+      </div>
     </div>
   )
 }

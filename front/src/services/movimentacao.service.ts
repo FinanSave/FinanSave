@@ -1,3 +1,4 @@
+import { getUserIdByToken } from '@/utils/getUserIdByToken'
 import axios from 'axios'
 
 const backendURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}`
@@ -80,9 +81,13 @@ export async function buscarMovimentacoes() {
   }
 }
 
-export async function buscarMovimentacaoTipo(tipo: string) {
+export async function buscarMovimentacaoTipo(tipo: string, token: string) {
+  const userId = getUserIdByToken(token)
+
   try {
-    const response = await backendAPI.get(`movimentacao/buscar/tipo/${tipo}/`)
+    const response = await backendAPI.get(
+      `movimentacao/buscar/tipo/${tipo}/${userId}/`,
+    )
     return response.data
   } catch (error) {
     console.error('Erro ao buscar movimentações por tipo >>', error)

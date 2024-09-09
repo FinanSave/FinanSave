@@ -8,11 +8,10 @@ import {
   AiOutlineEdit,
   AiOutlinePlusCircle,
   AiOutlineMinusCircle,
-  AiOutlineDollarCircle,
   AiOutlineBell,
   AiOutlineFileText,
 } from 'react-icons/ai'
-import { getOrcamento, getReminderData } from '@/services/orcamento.service'  // Adicione aqui o serviço para lembrete
+import { getOrcamento } from '@/services/orcamento.service'
 import { LogOut } from 'lucide-react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
@@ -26,7 +25,6 @@ const HomePage = () => {
   const [expensesLimit, setExpensesLimit] = useState<number | null>(null)
   const [spendingGoal, setSpendingGoal] = useState<number | null>(null)
   const [limitExceeded, setLimitExceeded] = useState<boolean>(false)
-  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false)
 
   // Adicionar estado para o lembrete
   const [reminder, setReminder] = useState<string | null>(null)
@@ -53,30 +51,31 @@ const HomePage = () => {
 
     fetchBudgetData()
 
-    // Função para verificar lembretes
-    const checkReminder = async () => {
-      try {
-        const token = localStorage.getItem('authToken') || ''
-        const reminderData = await getReminderData(token)
+    // // Função para verificar lembretes
+    // const checkReminder = async () => {
+    //   try {
+    //     const token = localStorage.getItem('authToken') || ''
+    //     const reminderData = await getReminderData(token)
 
-        // Exemplo de verificação de lembrete
-        if (reminderData && reminderData.timeLeft <= 24 * 60 * 60 * 1000) {  // 24 horas em milissegundos
-          setReminder(`Lembrete: Pagar ${reminderData.gasto} em 24 horas.`)
-        } else {
-          setReminder(null)
-        }
-      } catch (error) {
-        console.error('Erro ao verificar lembretes:', error)
-      }
-    }
+    //     // Exemplo de verificação de lembrete
+    //     if (reminderData && reminderData.timeLeft <= 24 * 60 * 60 * 1000) {
+    //       // 24 horas em milissegundos
+    //       setReminder(`Lembrete: Pagar ${reminderData.gasto} em 24 horas.`)
+    //     } else {
+    //       setReminder(null)
+    //     }
+    //   } catch (error) {
+    //     console.error('Erro ao verificar lembretes:', error)
+    //   }
+    // }
 
-    // Verificação periódica de lembrete a cada minuto
-    const reminderInterval = setInterval(() => {
-      checkReminder()
-    }, 60000)
+    // // Verificação periódica de lembrete a cada minuto
+    // const reminderInterval = setInterval(() => {
+    //   checkReminder()
+    // }, 60000)
 
-    // Limpar o intervalo quando o componente for desmontado
-    return () => clearInterval(reminderInterval)
+    // // Limpar o intervalo quando o componente for desmontado
+    // return () => clearInterval(reminderInterval)
   }, [])
 
   const handleCreateBudget = () => {
@@ -95,10 +94,6 @@ const HomePage = () => {
     router.push('/expense') // Leva para a tela de gastos
   }
 
-  const handleSpending = () => {
-    setIsExpenseModalOpen(true) // Abre o modal de despesas
-  }
-
   const handleReminder = () => {
     router.push('/reminder')
   }
@@ -108,23 +103,19 @@ const HomePage = () => {
     const doc = new jsPDF()
     autoTable(doc, {
       head: [['Saldo Atual', 'Limite de Gastos', 'Meta de Gastos']],
-      body: [[balance || 'Não registrado', expensesLimit || 'Não registrado', spendingGoal || 'Não registrado']],
+      body: [
+        [
+          balance || 'Não registrado',
+          expensesLimit || 'Não registrado',
+          spendingGoal || 'Não registrado',
+        ],
+      ],
     })
     doc.save('orcamento.pdf')
   }
 
   const handleLogOff = () => {
     router.push('/')
-  }
-
-  const handleCloseExpenseModal = () => {
-    setIsExpenseModalOpen(false)
-  }
-
-  const handleRegisterExpense = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    // Lógica de registro de despesa vai aqui (integração com o backend)
-    handleCloseExpenseModal()
   }
 
   return (
@@ -143,7 +134,7 @@ const HomePage = () => {
 
       {/* Exibe lembrete, se houver */}
       {reminder && (
-        <div className="mb-4 p-4 bg-yellow-100 text-yellow-800 rounded-lg">
+        <div className="mb-4 rounded-lg bg-yellow-100 p-4 text-yellow-800">
           {reminder}
         </div>
       )}
@@ -170,7 +161,7 @@ const HomePage = () => {
         </p>
 
         {limitExceeded && (
-          <p className="mt-4 text-lg text-red-600 font-semibold">
+          <p className="mt-4 text-lg font-semibold text-red-600">
             Atenção: O limite de gastos excede o saldo disponível! Por favor,
             ajuste seu orçamento.
           </p>
