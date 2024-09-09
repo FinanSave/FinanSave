@@ -44,4 +44,3 @@ class ControladorOrcamento:
             return orcamento.saldo
         else:
             return None
-    

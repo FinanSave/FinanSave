@@ -18,6 +18,7 @@ from django.urls import path
 from .views.user_views import cadastrar_usuario, atualizar_usuario, buscar_usuario_por_id, deletar_usuario, buscar_usuarios, login
 from .views.orcamento_views import criar_orcamento, buscar_orcamentos, atualizar_orcamento, deletar_orcamento, buscar_orcamento_por_user_id, buscar_saldo, buscar_orcamento_por_orcamento_id
 from .views.movimentacao_view import registrar_gasto, registrar_entrada, buscar_movimentacoes, deletar_movimentacao, buscar_movimentacao_orcamento_id, buscar_movimentacao_tipo, atualizar_movimentacao, buscar_movimentacao_recorrente, buscar_movimentacao_categoria
+from .views.relatorio_view import criar_dashboard
 
 urlpatterns = [
   # http://localhost:8000/user/cadastrar/
@@ -44,4 +45,5 @@ urlpatterns = [
   path('movimentacao/deletar/<int:id>/', deletar_movimentacao, name='deletar_movimentacao'),
   path('movimentacao/atualizar/<int:movimentacao_id>/', atualizar_movimentacao, name='atualizar_movimentacao'),
   path('movimentacao/atualizar/<int:movimentacao_id>/', atualizar_movimentacao, name='atualizar_movimentacao'),
+  path('relatorio/criar/', criar_dashboard, name='criar_dashboard'),
   ]
