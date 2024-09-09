@@ -39,7 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',     # Sistema de mensagens
     'django.contrib.staticfiles',  # Gerencia arquivos estáticos
     'corsheaders',                 # Habilita o CORS
+<<<<<<< Updated upstream
     'rest_framework',              # Framework para APIs REST
+=======
+    'django_crontab',              # Cria e gerencia tarefas agendadas
+>>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
@@ -137,3 +141,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#CRONJOBS = [
+#    ('*/5 * * * *', 'your_app.tasks.my_cron_job'),
+#    # Add more cron jobs as needed
+#]
