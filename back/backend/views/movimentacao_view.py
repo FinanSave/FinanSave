@@ -81,9 +81,9 @@ def buscar_movimentacoes(request):
 
     return JsonResponse({"error": "Método não permitido"}, status=405)
 
-def buscar_movimentacao_tipo(request, tipo):
+def buscar_movimentacao_tipo(request, tipo, user_id):
     if request.method == "GET":
-        movimentacoes = controlador_movimentacao.buscar_movimentacao_tipo(tipo)
+        movimentacoes = controlador_movimentacao.buscar_movimentacao_tipo(tipo, user_id)
         movimentacoes_data = [
             {
                 "id": m.id,
@@ -94,7 +94,8 @@ def buscar_movimentacao_tipo(request, tipo):
                 "valor": m.valor,
                 "data_movimentacao": m.data_movimentacao,
                 "quer_ser_lembrado": m.quer_ser_lembrado,
-                "recorrente": m.recorrente
+                "recorrente": m.recorrente,
+                "mensagem": m.mensagem
             } for m in movimentacoes
         ]
         return JsonResponse(movimentacoes_data, safe=False)
