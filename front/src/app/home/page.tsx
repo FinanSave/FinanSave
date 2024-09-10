@@ -102,7 +102,7 @@ const HomePage = () => {
     // Função de exportar PDF
     const doc = new jsPDF()
     autoTable(doc, {
-      head: [['Saldo Atual', 'Limite de Gastos', 'Meta de Gastos']],
+      head: [['Saldo Atual', 'Limite de Gastos', 'Meta de Economia']],
       body: [
         [
           balance || 'Não registrado',
@@ -154,7 +154,7 @@ const HomePage = () => {
             : `R$ ${expensesLimit}`}
         </p>
         <p className="mt-2 text-lg text-gray-800">
-          Meta de Gastos:{' '}
+          Meta de Economia:{' '}
           {spendingGoal === null || spendingGoal === undefined
             ? 'Não registrado ainda'
             : `R$ ${spendingGoal}`}

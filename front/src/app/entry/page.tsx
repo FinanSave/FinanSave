@@ -372,7 +372,7 @@ const EntryPage = () => {
                     </option>
                     {entries.map((entry) => (
                       <option key={entry.id} value={entry.id}>
-                        {entry.nome}
+                        {entry.nome} - {formatCurrency(entry.valor)}
                       </option>
                     ))}
                   </select>

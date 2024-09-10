@@ -18,22 +18,18 @@ export interface MovimentacaoInterface {
 }
 
 export async function registrarGasto(
-  nome: string,
-  categoria: string,
-  userId: string,
-  valor: number,
-  querSerLembrado: boolean,
-  recorrente = false,
-  mensagem = '',
+  expenseData: MovimentacaoInterface,
+  token: string,
 ) {
   const requestData = {
-    nome,
-    categoria,
-    userId,
-    valor,
-    querSerLembrado,
-    recorrente,
-    mensagem,
+    nome: expenseData.nome,
+    categoria: expenseData.categoria,
+    user_id: getUserIdByToken(token),
+    valor: expenseData.valor,
+    data_movimentacao: expenseData.dataMovimentacao,
+    quer_ser_lembrado: expenseData.querSerLembrado,
+    recorrente: expenseData.recorrente,
+    mensagem: expenseData.mensagem,
   }
 
   try {
