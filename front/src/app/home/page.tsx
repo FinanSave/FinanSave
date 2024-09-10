@@ -25,6 +25,7 @@ const HomePage = () => {
   const [expensesLimit, setExpensesLimit] = useState<number | null>(null)
   const [spendingGoal, setSpendingGoal] = useState<number | null>(null)
   const [limitExceeded, setLimitExceeded] = useState<boolean>(false)
+  const [haveBudget, setHaveBudget] = useState<boolean>(false)
 
   // Adicionar estado para o lembrete
   const [reminder, setReminder] = useState<string | null>(null)
@@ -34,6 +35,8 @@ const HomePage = () => {
       try {
         const token = localStorage.getItem('authToken') || ''
         const budgetData = await getOrcamento(token)
+
+        setHaveBudget(true)
 
         setBalance(budgetData?.saldo || null)
         setExpensesLimit(budgetData?.limite_gastos || null)
@@ -184,7 +187,8 @@ const HomePage = () => {
       <section className="grid w-full max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">
         <button
           onClick={handleCreateBudget}
-          className="flex transform items-center justify-center space-x-2 rounded-lg bg-blue-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-700"
+          disabled={haveBudget}
+          className="flex transform items-center justify-center space-x-2 rounded-lg bg-blue-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-30"
         >
           <AiOutlineEdit className="text-xl" />
           <span>Criar Orçamento</span>
@@ -210,13 +214,6 @@ const HomePage = () => {
           <AiOutlineMinusCircle className="text-xl" />
           <span>Gastos</span>
         </button>
-        {/* <button
-          onClick={handleSpending}
-          className="flex transform items-center justify-center space-x-2 rounded-lg bg-orange-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-orange-700"
-        >
-          <AiOutlineDollarCircle className="text-xl" />
-          <span>Despesas</span>
-        </button> */}
         <button
           onClick={handleReminder}
           className="flex transform items-center justify-center space-x-2 rounded-lg bg-yellow-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-yellow-700"
@@ -232,86 +229,6 @@ const HomePage = () => {
           <span> Dashboard </span>
         </button>
       </section>
-
-      {/* Modal de Despesas */}
-      {/* {isExpenseModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">
-              Registrar Despesas
-            </h2>
-            <form onSubmit={handleRegisterExpense}>
-              <div className="mb-4">
-                <label
-                  htmlFor="expenseAmount"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Valor da Despesa <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="expenseAmount"
-                  name="expenseAmount"
-                  type="number"
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="expenseDate"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Data da Despesa <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="expenseDate"
-                  name="expenseDate"
-                  type="date"
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="expenseCategory"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Categoria <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="expenseCategory"
-                  name="expenseCategory"
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                  required
-                >
-                  <option value="" disabled>
-                    Selecione uma categoria
-                  </option>
-                  <option value="alimentacao">Alimentação</option>
-                  <option value="transporte">Transporte</option>
-                  <option value="lazer">Lazer</option>
-                  <option value="moradia">Moradia</option>
-                </select>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={handleCloseExpenseModal}
-                  className="rounded-md bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-                >
-                  Confirmar Despesa
-                </button>
-              </div>
-            </form>
-          </div>
-        </div> */}
-      {/* )} */}
     </div>
   )
 }
