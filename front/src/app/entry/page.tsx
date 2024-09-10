@@ -424,7 +424,7 @@ const EntryPage = () => {
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Categoria</th>
-                <th>Data da Movimentação</th>
+                <th>Data da Entrada</th>
                 <th>Valor</th>
                 <th>Quer ser lembrado</th>
                 <th>Recorrente</th>

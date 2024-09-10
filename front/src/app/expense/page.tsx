@@ -409,7 +409,7 @@ const ExpensePage = () => {
 
       <div>
         <h1 className="mx-auto mt-12 text-center text-2xl font-bold text-blue-700">
-          Entradas
+          Gastos
         </h1>
         {expenses.length > 0 ? (
           <table border={1} cellPadding="10" cellSpacing="1">
@@ -418,7 +418,7 @@ const ExpensePage = () => {
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Categoria</th>
-                <th>Data da Movimentação</th>
+                <th>Data do Gasto</th>
                 <th>Valor</th>
                 <th>Quer ser lembrado</th>
                 <th>Recorrente</th>
