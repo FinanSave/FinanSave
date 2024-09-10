@@ -143,5 +143,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRONJOBS = [
     ('0 20 * * *', 'back.backend.models.movimentacao_model.salvar_proxima_movimentacao'),
+    ('0 22 * * *', 'back.backend.controller.orcamento_controller.criar_orcamento'),
     # Add more cron jobs as needed
 ]
