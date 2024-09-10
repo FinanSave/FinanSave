@@ -33,9 +33,9 @@ class Movimentacao(models.Model):
     def salvar_proxima_movimentacao(self):
         if self.recorrente:
             # Calcula a data do próximo mês
-            proximo_mes = self.created_at.month + 1 if self.created_at.month < 12 else 1
-            ano_proximo = self.created_at.year + 1 if proximo_mes == 1 else self.created_at.year
-            dia_proximo = min(self.created_at.day, (date(ano_proximo, proximo_mes, 1) - timedelta(days=1)).day)
+            proximo_mes = self.data_movimentacao.month + 1 if self.data_movimentacao.month < 12 else 1
+            ano_proximo = self.data_movimentacao.year + 1 if proximo_mes == 1 else self.data_movimentacao.year
+            dia_proximo = min(self.data_movimentacao.day, (date(ano_proximo, proximo_mes, 1) - timedelta(days=1)).day)
             
             self.proxima_movimentacao = date(ano_proximo, proximo_mes, dia_proximo)
             self.save()
@@ -44,16 +44,15 @@ class Movimentacao(models.Model):
         if self.recorrente and self.proxima_movimentacao and date.today() == self.proxima_movimentacao:
             # Recria a movimentacao e define a próxima data
             nova_movimentacao = Movimentacao.objects.create(
-                nome = self.nome
-                categoria = self.categoria
-                valor = self.valor
-                orcamento = self.orcamento
-                tipo = self.tipo
-                quer_ser_lembrado = self.quer_ser_lembrado
-                recorrente = self.recorrente
-                mensagem = self.mensagem
-                created_at = self.created_at
-                updated_at = self.updated_at
+                nome = self.nome,
+                categoria = self.categoria,
+                valor = self.valor,
+                orcamento = self.orcamento,
+                tipo = self.tipo,
+                quer_ser_lembrado = self.quer_ser_lembrado,
+                recorrente = self.recorrente,
+                mensagem = self.mensagem,
+                data_movimentacao = self.data_movimentacao,
             )
             nova_movimentacao.salvar_proxima_movimentacao()
             return nova_movimentacao
