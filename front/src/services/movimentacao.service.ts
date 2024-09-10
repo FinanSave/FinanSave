@@ -1,3 +1,4 @@
+import { getUserIdByToken } from '@/utils/getUserIdByToken'
 import axios from 'axios'
 
 const backendURL = `${process.env.NEXT_PUBLIC_BACKEND_URL}`
@@ -6,23 +7,29 @@ const backendAPI = axios.create({
   baseURL: backendURL,
 })
 
+export interface MovimentacaoInterface {
+  nome: string
+  categoria: string
+  valor: number
+  dataMovimentacao: string
+  querSerLembrado?: boolean
+  recorrente?: boolean
+  mensagem?: string
+}
+
 export async function registrarGasto(
-  nome: string,
-  categoria: string,
-  userId: string,
-  valor: number,
-  querSerLembrado: boolean,
-  recorrente = false,
-  mensagem = '',
+  expenseData: MovimentacaoInterface,
+  token: string,
 ) {
   const requestData = {
-    nome,
-    categoria,
-    userId,
-    valor,
-    querSerLembrado,
-    recorrente,
-    mensagem,
+    nome: expenseData.nome,
+    categoria: expenseData.categoria,
+    user_id: getUserIdByToken(token),
+    valor: expenseData.valor,
+    data_movimentacao: expenseData.dataMovimentacao,
+    quer_ser_lembrado: expenseData.querSerLembrado,
+    recorrente: expenseData.recorrente,
+    mensagem: expenseData.mensagem,
   }
 
   try {
@@ -39,22 +46,18 @@ export async function registrarGasto(
 }
 
 export async function registrarEntrada(
-  nome: string,
-  categoria: string,
-  userId: string,
-  valor: number,
-  querSerLembrado: boolean,
-  recorrente: boolean,
-  mensagem = '',
+  entryData: MovimentacaoInterface,
+  token: string,
 ) {
   const requestData = {
-    nome,
-    categoria,
-    userId,
-    valor,
-    querSerLembrado,
-    recorrente,
-    mensagem,
+    nome: entryData.nome,
+    categoria: entryData.categoria,
+    user_id: getUserIdByToken(token),
+    valor: entryData.valor,
+    data_movimentacao: entryData.dataMovimentacao,
+    quer_ser_lembrado: entryData.querSerLembrado,
+    recorrente: entryData.recorrente,
+    mensagem: entryData.mensagem,
   }
 
   try {
@@ -80,9 +83,13 @@ export async function buscarMovimentacoes() {
   }
 }
 
-export async function buscarMovimentacaoTipo(tipo: string) {
+export async function buscarMovimentacaoTipo(tipo: string, token: string) {
+  const userId = getUserIdByToken(token)
+
   try {
-    const response = await backendAPI.get(`movimentacao/buscar/tipo/${tipo}/`)
+    const response = await backendAPI.get(
+      `movimentacao/buscar/tipo/${tipo}/${userId}/`,
+    )
     return response.data
   } catch (error) {
     console.error('Erro ao buscar movimentações por tipo >>', error)

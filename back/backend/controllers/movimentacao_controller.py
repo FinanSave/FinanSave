@@ -16,8 +16,13 @@ class ControladorMovimentacao:
     def buscar_movimentacoes(self):
         return self.repositorio_movimentacoes.buscar_movimentacoes()
     
-    def buscar_movimentacao_tipo(self, tipo): #Busca de uma movimentação através do tipo
-        return self.repositorio_movimentacoes.buscar_movimentacao_tipo(tipo)
+    def buscar_movimentacao_tipo(self, tipo, user_id): #Busca de uma movimentação através do tipo de um usuário
+        orcamento = self.repositorio_orcamento.buscar_orcamento_por_user_id(user_id)
+        
+        if not orcamento:
+            raise ValueError("Orçamento não encontrado")
+        
+        return self.repositorio_movimentacoes.buscar_movimentacao_tipo(tipo, orcamento.id)
     
     def buscar_movimentacao_orcamento_id(self, orcamento_id): #Busca de uma movimentação através do orcamento
         return self.repositorio_movimentacoes.buscar_movimentacao_orcamento_id(orcamento_id)

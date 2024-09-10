@@ -31,8 +31,8 @@ class RepositorioMovimentacao:
         return Movimentacao.objects.filter(id = movimentacao_id).first()
     
     @staticmethod
-    def buscar_movimentacao_tipo(tipo): #Busca de uma movimentação através do tipo
-        return Movimentacao.objects.filter(tipo = tipo)
+    def buscar_movimentacao_tipo(tipo, orcamento_id): #Busca de uma movimentação através do tipo
+        return Movimentacao.objects.filter(tipo=tipo, orcamento_id=orcamento_id)
     
     @staticmethod
     def buscar_movimentacao_orcamento_id(orcamento_id): #Busca de uma movimentação através do orcamento

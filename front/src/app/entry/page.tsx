@@ -1,44 +1,59 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import {
-  AiOutlinePlusCircle,
-  AiOutlineCalendar,
-  AiOutlineDelete,
-} from 'react-icons/ai'
+import { AiOutlinePlusCircle, AiOutlineDelete } from 'react-icons/ai'
 
 import Header from '@/components/Header'
 import BackHomeButton from '@/components/BackHomeButton'
 import useAuth from '@/middlewares/auth'
+import {
+  buscarMovimentacaoTipo,
+  deletarMovimentacao,
+  registrarEntrada,
+} from '@/services/movimentacao.service'
 
 const EntryPage = () => {
   useAuth()
 
+  interface Entry {
+    id: number
+    nome: string
+    categoria: string
+    orcamento_id: number
+    tipo: string
+    valor: string
+    data_movimentacao: string
+    quer_ser_lembrado: boolean
+    recorrente: boolean
+    mensagem: string
+  }
+
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
-  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
-  const [entries, setEntries] = useState<string[]>([]) // Armazena as entradas recuperadas do backend
-  const [selectedEntry, setSelectedEntry] = useState<string>('')
+  const [entries, setEntries] = useState<Entry[]>([])
+  const [selectedEntry, setSelectedEntry] = useState<number>()
+  const [name, setName] = useState<string>('')
   const [entryAmount, setEntryAmount] = useState<string>('')
   const [entryDate, setEntryDate] = useState<string>('')
+  const [reminder, setReminder] = useState<boolean>(false)
+  const [recurrent, setRecurrent] = useState<boolean>(false)
+  const [message, setMessage] = useState<string>('')
   const [category, setCategory] = useState<string>('')
-  const categories = ['Salário', 'Freelance', 'Investimentos', 'Outros'] // Exemplo de lista de categorias
+  const categories = ['Transporte', 'Comida', 'Roupas', 'Lazer', 'Outros']
+
+  const fetchEntries = async () => {
+    try {
+      const token = localStorage.getItem('authToken') || ''
+      const entries = await buscarMovimentacaoTipo('Entrada', token)
+
+      setEntries(entries)
+    } catch (error) {
+      console.error('Erro ao buscar entradas:', error)
+      setEntries([])
+    }
+  }
 
   useEffect(() => {
-    // Simulação de busca das entradas do backend (deve ser substituído pela chamada real ao backend)
-    const fetchEntries = async () => {
-      try {
-        const fetchedEntries = await fetch('/api/entries').then((res) =>
-          res.json(),
-        )
-
-        setEntries(fetchedEntries) // Assume que o backend retorna um array de strings com os IDs ou nomes das entradas
-      } catch (error) {
-        console.error('Erro ao buscar entradas:', error)
-        setEntries([]) // Em caso de erro, define as entradas como uma lista vazia
-      }
-    }
-
     fetchEntries()
   }, [])
 
@@ -48,15 +63,6 @@ const EntryPage = () => {
 
   const handleCloseRegisterModal = () => {
     setIsRegisterModalOpen(false)
-    resetForm()
-  }
-
-  const handleOpenScheduleModal = () => {
-    setIsScheduleModalOpen(true)
-  }
-
-  const handleCloseScheduleModal = () => {
-    setIsScheduleModalOpen(false)
     resetForm()
   }
 
@@ -72,9 +78,31 @@ const EntryPage = () => {
     setEntryAmount('')
     setEntryDate('')
     setCategory('')
+    setName('')
+    setMessage('')
+    setReminder(false)
+    setRecurrent(false)
   }
 
-  const handleRegisterEntry = (e: React.FormEvent<HTMLFormElement>) => {
+  // Função para formatar o valor para "R$xxx,xx"
+  const formatCurrency = (value: string) => {
+    return Number(value).toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    })
+  }
+
+  // Função para formatar a data para "DD/MM/AAAA"
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+  }
+
+  const handleRegisterEntry = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     // Validação do valor da entrada (Extensão 2a)
@@ -84,48 +112,32 @@ const EntryPage = () => {
       return
     }
 
-    // Registro da entrada com base na data e valor (Aqui deve ser integrado com o backend)
-    console.log('Registrando entrada:', { amount, entryDate, category })
+    const token = localStorage.getItem('authToken') || ''
+
+    const entryData = {
+      nome: name,
+      categoria: category,
+      valor: amount,
+      dataMovimentacao: entryDate,
+      querSerLembrado: reminder,
+      recorrente: recurrent,
+      mensagem: message,
+    }
+
+    try {
+      const registeredEntry = await registrarEntrada(entryData, token)
+      console.log('Entrada registrada:', registeredEntry)
+
+      fetchEntries()
+    } catch (error) {
+      console.error('Erro ao registrar entrada:', error)
+    }
 
     // Fechar modal e resetar formulário
     handleCloseRegisterModal()
   }
 
-  const handleScheduleEntry = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    // Validação do valor da entrada (Extensão 2a)
-    const amount = parseFloat(entryAmount)
-    if (isNaN(amount) || amount <= 0) {
-      alert('Por favor, insira um valor válido para a entrada.')
-      return
-    }
-
-    // Validação da data da entrada (Extensões 3a e 3b)
-    const selectedDate = new Date(entryDate)
-    const currentDate = new Date()
-    if (selectedDate <= currentDate) {
-      alert(
-        'A data é para hoje ou no passado. A entrada será registrada agora.',
-      )
-      // Tratar como registro imediato da entrada, integrando com o backend
-    } else {
-      alert('A data é futura. A entrada será agendada.')
-      // Tratar como agendamento da entrada, integrando com o backend
-    }
-
-    // Registro da entrada com base na data e valor (Aqui deve ser integrado com o backend)
-    console.log('Agendando/Registrando entrada:', {
-      amount,
-      entryDate,
-      category,
-    })
-
-    // Fechar modal e resetar formulário
-    handleCloseScheduleModal()
-  }
-
-  const handleRemoveEntry = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRemoveEntry = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!selectedEntry) {
@@ -133,8 +145,14 @@ const EntryPage = () => {
       return
     }
 
-    // Remover entrada (Aqui você deve integrar com o backend)
-    console.log('Removendo entrada:', selectedEntry)
+    try {
+      const removedEntry = await deletarMovimentacao(selectedEntry)
+      console.log('Removendo entrada:', removedEntry)
+
+      fetchEntries()
+    } catch (error) {
+      console.error('Erro ao remover entrada:', error)
+    }
 
     // Fechar modal e resetar seleção
     handleCloseRemoveModal()
@@ -160,13 +178,6 @@ const EntryPage = () => {
           <span>Registrar Entradas</span>
         </button>
         <button
-          onClick={handleOpenScheduleModal}
-          className="flex transform items-center justify-center space-x-2 rounded-lg bg-blue-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-blue-700"
-        >
-          <AiOutlineCalendar className="text-xl" />
-          <span>Agendar Entradas</span>
-        </button>
-        <button
           onClick={handleOpenRemoveModal}
           className="flex transform items-center justify-center space-x-2 rounded-lg bg-red-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-red-700"
         >
@@ -186,6 +197,23 @@ const EntryPage = () => {
             <form onSubmit={handleRegisterEntry}>
               <div className="mb-4">
                 <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Nome <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
                   htmlFor="entryAmount"
                   className="block text-sm font-medium text-gray-700"
                 >
@@ -200,6 +228,40 @@ const EntryPage = () => {
                   className="mt-1 w-full rounded-md border border-gray-300 p-2"
                   required
                 />
+              </div>
+              <div className="mb-4 flex space-x-6">
+                <div className="flex items-center space-x-2">
+                  <label
+                    htmlFor="recorrente"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Recorrente
+                  </label>
+                  <input
+                    id="recorrente"
+                    name="recorrente"
+                    type="checkbox"
+                    checked={recurrent}
+                    onChange={(e) => setRecurrent(e.target.checked)}
+                    className="mt-1 rounded-md border-gray-300"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <label
+                    htmlFor="querSerLembrado"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Quer ser lembrado
+                  </label>
+                  <input
+                    id="querSerLembrado"
+                    name="querSerLembrado"
+                    type="checkbox"
+                    checked={reminder}
+                    onChange={(e) => setReminder(e.target.checked)}
+                    className="mt-1 rounded-md border-gray-300"
+                  />
+                </div>
               </div>
               <div className="mb-4">
                 <label
@@ -242,6 +304,22 @@ const EntryPage = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="mensagem"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Mensagem
+                </label>
+                <textarea
+                  id="mensagem"
+                  name="mensagem"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="mt-1 w-full resize-none rounded-md border border-gray-300 p-2"
+                  rows={4}
+                />
               </div>
               <div className="flex justify-end space-x-4">
                 <button
@@ -254,94 +332,6 @@ const EntryPage = () => {
                 <button
                   type="submit"
                   className="rounded-md bg-teal-600 px-4 py-2 text-white hover:bg-teal-700"
-                >
-                  Confirmar Entrada
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Modal para Agendar Entradas */}
-      {isScheduleModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-            <h2 className="mb-4 text-xl font-semibold text-gray-800">
-              Agendar Entradas
-            </h2>
-            {/* Conteúdo do Modal */}
-            <form onSubmit={handleScheduleEntry}>
-              <div className="mb-4">
-                <label
-                  htmlFor="entryAmount"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Valor da Entrada <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="entryAmount"
-                  name="entryAmount"
-                  type="number"
-                  value={entryAmount}
-                  onChange={(e) => setEntryAmount(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="entryDate"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Data da Entrada <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="entryDate"
-                  name="entryDate"
-                  type="date"
-                  value={entryDate}
-                  onChange={(e) => setEntryDate(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="category"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Categoria <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                  required
-                >
-                  <option value="" disabled>
-                    Selecione uma categoria
-                  </option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={handleCloseScheduleModal}
-                  className="rounded-md bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                 >
                   Confirmar Entrada
                 </button>
@@ -373,7 +363,7 @@ const EntryPage = () => {
                     id="entryId"
                     name="entryId"
                     value={selectedEntry}
-                    onChange={(e) => setSelectedEntry(e.target.value)}
+                    onChange={(e) => setSelectedEntry(Number(e.target.value))}
                     className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     required
                   >
@@ -381,8 +371,8 @@ const EntryPage = () => {
                       Selecione uma entrada
                     </option>
                     {entries.map((entry) => (
-                      <option key={entry} value={entry}>
-                        {entry}
+                      <option key={entry.id} value={entry.id}>
+                        {entry.nome} - {formatCurrency(entry.valor)}
                       </option>
                     ))}
                   </select>
@@ -422,6 +412,47 @@ const EntryPage = () => {
           </div>
         </div>
       )}
+
+      <div>
+        <h1 className="mx-auto mt-12 text-center text-2xl font-bold text-blue-700">
+          Entradas
+        </h1>
+        {entries.length > 0 ? (
+          <table border={1} cellPadding="10" cellSpacing="1">
+            <thead>
+              <tr className="text-slate-800">
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Data da Entrada</th>
+                <th>Valor</th>
+                <th>Quer ser lembrado</th>
+                <th>Recorrente</th>
+                <th>Mensagem</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entries.map((entry) => (
+                <tr
+                  className="mx-auto text-center text-slate-800"
+                  key={entry.id}
+                >
+                  <td>{entry.id}</td>
+                  <td>{entry.nome}</td>
+                  <td>{entry.categoria}</td>
+                  <td>{formatDate(entry.data_movimentacao)}</td>
+                  <td>{formatCurrency(entry.valor)}</td>
+                  <td>{entry.quer_ser_lembrado ? 'Sim' : 'Não'}</td>
+                  <td>{entry.recorrente ? 'Sim' : 'Não'}</td>
+                  <td>{entry.mensagem || 'Sem mensagem'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Nenhuma movimentação encontrada</p>
+        )}
+      </div>
     </div>
   )
 }
