@@ -7,6 +7,16 @@ const backendAPI = axios.create({
   baseURL: backendURL,
 })
 
+export interface MovimentacaoInterface {
+  nome: string
+  categoria: string
+  valor: number
+  dataMovimentacao: string
+  querSerLembrado?: boolean
+  recorrente?: boolean
+  mensagem?: string
+}
+
 export async function registrarGasto(
   nome: string,
   categoria: string,
@@ -40,22 +50,18 @@ export async function registrarGasto(
 }
 
 export async function registrarEntrada(
-  nome: string,
-  categoria: string,
-  userId: string,
-  valor: number,
-  querSerLembrado: boolean,
-  recorrente: boolean,
-  mensagem = '',
+  entryData: MovimentacaoInterface,
+  token: string,
 ) {
   const requestData = {
-    nome,
-    categoria,
-    userId,
-    valor,
-    querSerLembrado,
-    recorrente,
-    mensagem,
+    nome: entryData.nome,
+    categoria: entryData.categoria,
+    user_id: getUserIdByToken(token),
+    valor: entryData.valor,
+    data_movimentacao: entryData.dataMovimentacao,
+    quer_ser_lembrado: entryData.querSerLembrado,
+    recorrente: entryData.recorrente,
+    mensagem: entryData.mensagem,
   }
 
   try {

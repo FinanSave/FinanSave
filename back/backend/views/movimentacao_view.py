@@ -94,7 +94,8 @@ def buscar_movimentacao_tipo(request, tipo, user_id):
                 "valor": m.valor,
                 "data_movimentacao": m.data_movimentacao,
                 "quer_ser_lembrado": m.quer_ser_lembrado,
-                "recorrente": m.recorrente
+                "recorrente": m.recorrente,
+                "mensagem": m.mensagem
             } for m in movimentacoes
         ]
         return JsonResponse(movimentacoes_data, safe=False)

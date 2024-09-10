@@ -6,7 +6,11 @@ import { AiOutlinePlusCircle, AiOutlineDelete } from 'react-icons/ai'
 import Header from '@/components/Header'
 import BackHomeButton from '@/components/BackHomeButton'
 import useAuth from '@/middlewares/auth'
-import { buscarMovimentacaoTipo } from '@/services/movimentacao.service'
+import {
+  buscarMovimentacaoTipo,
+  deletarMovimentacao,
+  registrarEntrada,
+} from '@/services/movimentacao.service'
 
 const EntryPage = () => {
   useAuth()
@@ -21,31 +25,35 @@ const EntryPage = () => {
     data_movimentacao: string
     quer_ser_lembrado: boolean
     recorrente: boolean
+    mensagem: string
   }
 
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false)
   const [entries, setEntries] = useState<Entry[]>([])
-  const [selectedEntry, setSelectedEntry] = useState<string>('')
+  const [selectedEntry, setSelectedEntry] = useState<number>()
+  const [name, setName] = useState<string>('')
   const [entryAmount, setEntryAmount] = useState<string>('')
   const [entryDate, setEntryDate] = useState<string>('')
+  const [reminder, setReminder] = useState<boolean>(false)
+  const [recurrent, setRecurrent] = useState<boolean>(false)
+  const [message, setMessage] = useState<string>('')
   const [category, setCategory] = useState<string>('')
   const categories = ['Transporte', 'Comida', 'Roupas', 'Lazer', 'Outros']
 
-  useEffect(() => {
-    const fetchEntries = async () => {
-      try {
-        const token = localStorage.getItem('authToken') || ''
-        const entries = await buscarMovimentacaoTipo('Entrada', token)
-        console.log('Response from API:', entries)
+  const fetchEntries = async () => {
+    try {
+      const token = localStorage.getItem('authToken') || ''
+      const entries = await buscarMovimentacaoTipo('Entrada', token)
 
-        setEntries(entries)
-      } catch (error) {
-        console.error('Erro ao buscar entradas:', error)
-        setEntries([])
-      }
+      setEntries(entries)
+    } catch (error) {
+      console.error('Erro ao buscar entradas:', error)
+      setEntries([])
     }
+  }
 
+  useEffect(() => {
     fetchEntries()
   }, [])
 
@@ -70,6 +78,10 @@ const EntryPage = () => {
     setEntryAmount('')
     setEntryDate('')
     setCategory('')
+    setName('')
+    setMessage('')
+    setReminder(false)
+    setRecurrent(false)
   }
 
   // Função para formatar o valor para "R$xxx,xx"
@@ -90,7 +102,7 @@ const EntryPage = () => {
     })
   }
 
-  const handleRegisterEntry = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegisterEntry = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     // Validação do valor da entrada (Extensão 2a)
@@ -100,14 +112,32 @@ const EntryPage = () => {
       return
     }
 
-    // Registro da entrada com base na data e valor (Aqui deve ser integrado com o backend)
-    console.log('Registrando entrada:', { amount, entryDate, category })
+    const token = localStorage.getItem('authToken') || ''
+
+    const entryData = {
+      nome: name,
+      categoria: category,
+      valor: amount,
+      dataMovimentacao: entryDate,
+      querSerLembrado: reminder,
+      recorrente: recurrent,
+      mensagem: message,
+    }
+
+    try {
+      const registeredEntry = await registrarEntrada(entryData, token)
+      console.log('Entrada registrada:', registeredEntry)
+
+      fetchEntries()
+    } catch (error) {
+      console.error('Erro ao registrar entrada:', error)
+    }
 
     // Fechar modal e resetar formulário
     handleCloseRegisterModal()
   }
 
-  const handleRemoveEntry = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRemoveEntry = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!selectedEntry) {
@@ -115,8 +145,14 @@ const EntryPage = () => {
       return
     }
 
-    // Remover entrada (Aqui você deve integrar com o backend)
-    console.log('Removendo entrada:', selectedEntry)
+    try {
+      const removedEntry = await deletarMovimentacao(selectedEntry)
+      console.log('Removendo entrada:', removedEntry)
+
+      fetchEntries()
+    } catch (error) {
+      console.error('Erro ao remover entrada:', error)
+    }
 
     // Fechar modal e resetar seleção
     handleCloseRemoveModal()
@@ -161,6 +197,23 @@ const EntryPage = () => {
             <form onSubmit={handleRegisterEntry}>
               <div className="mb-4">
                 <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Nome <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
                   htmlFor="entryAmount"
                   className="block text-sm font-medium text-gray-700"
                 >
@@ -175,6 +228,40 @@ const EntryPage = () => {
                   className="mt-1 w-full rounded-md border border-gray-300 p-2"
                   required
                 />
+              </div>
+              <div className="mb-4 flex space-x-6">
+                <div className="flex items-center space-x-2">
+                  <label
+                    htmlFor="recorrente"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Recorrente
+                  </label>
+                  <input
+                    id="recorrente"
+                    name="recorrente"
+                    type="checkbox"
+                    checked={recurrent}
+                    onChange={(e) => setRecurrent(e.target.checked)}
+                    className="mt-1 rounded-md border-gray-300"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <label
+                    htmlFor="querSerLembrado"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Quer ser lembrado
+                  </label>
+                  <input
+                    id="querSerLembrado"
+                    name="querSerLembrado"
+                    type="checkbox"
+                    checked={reminder}
+                    onChange={(e) => setReminder(e.target.checked)}
+                    className="mt-1 rounded-md border-gray-300"
+                  />
+                </div>
               </div>
               <div className="mb-4">
                 <label
@@ -218,6 +305,22 @@ const EntryPage = () => {
                   ))}
                 </select>
               </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="mensagem"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Mensagem
+                </label>
+                <textarea
+                  id="mensagem"
+                  name="mensagem"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="mt-1 w-full resize-none rounded-md border border-gray-300 p-2"
+                  rows={4}
+                />
+              </div>
               <div className="flex justify-end space-x-4">
                 <button
                   type="button"
@@ -260,7 +363,7 @@ const EntryPage = () => {
                     id="entryId"
                     name="entryId"
                     value={selectedEntry}
-                    onChange={(e) => setSelectedEntry(e.target.value)}
+                    onChange={(e) => setSelectedEntry(Number(e.target.value))}
                     className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     required
                   >
@@ -268,7 +371,7 @@ const EntryPage = () => {
                       Selecione uma entrada
                     </option>
                     {entries.map((entry) => (
-                      <option key={entry.id} value={entry.nome}>
+                      <option key={entry.id} value={entry.id}>
                         {entry.nome}
                       </option>
                     ))}
@@ -323,6 +426,9 @@ const EntryPage = () => {
                 <th>Categoria</th>
                 <th>Data da Movimentação</th>
                 <th>Valor</th>
+                <th>Quer ser lembrado</th>
+                <th>Recorrente</th>
+                <th>Mensagem</th>
               </tr>
             </thead>
             <tbody>
@@ -336,6 +442,9 @@ const EntryPage = () => {
                   <td>{entry.categoria}</td>
                   <td>{formatDate(entry.data_movimentacao)}</td>
                   <td>{formatCurrency(entry.valor)}</td>
+                  <td>{entry.quer_ser_lembrado ? 'Sim' : 'Não'}</td>
+                  <td>{entry.recorrente ? 'Sim' : 'Não'}</td>
+                  <td>{entry.mensagem || 'Sem mensagem'}</td>
                 </tr>
               ))}
             </tbody>
