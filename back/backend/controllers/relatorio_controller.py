@@ -52,6 +52,26 @@ class ControladorRelatorio:
         df = pd.DataFrame(data)
         print(df)
 
+        lista_movimentacoes = self.controlador_movimentacao.buscar_movimentacao_orcamento_id(orcamento.id)
+    
+        # obtendo movimentações do mês atual
+        lista_resultados_mes_atual = [mov for mov in lista_movimentacoes if mov.data_movimentacao.month == mes_int]
+
+        mes_anterior_int = (mes_int - 1) if mes_int > 1 else 12
+        lista_resultados_mes_anterior = [mov for mov in lista_movimentacoes if mov.data_movimentacao.month == mes_anterior_int]
+
+        def movimentacoes_para_dataframe(lista_resultados):
+            data = {
+                'dia': [mov.data_movimentacao.day for mov in lista_resultados],
+                'valor': [mov.valor for mov in lista_resultados]
+            }
+            df = pd.DataFrame(data)
+            df['valor'] = pd.to_numeric(df['valor'], errors='coerce')  # garantir que 'valor' é numérico
+            return df
+
+        df_atual = movimentacoes_para_dataframe(lista_resultados_mes_atual)
+        df_anterior = movimentacoes_para_dataframe(lista_resultados_mes_anterior)
+
         # PIZZA
         filename_pizza='pizza.png'
         tipo_counts = df['tipo'].value_counts()
@@ -72,6 +92,19 @@ class ControladorRelatorio:
         plt.ylabel('Categoria')
         plt.xticks(rotation=45)
         plt.savefig(filename_barras)
+        plt.close()
+
+        #LINHAS
+        filename_linhas = 'linhas_comparativo.png'
+        plt.figure(figsize=(10, 6))
+        plt.plot(df_atual.index, df_atual['valor'], label='Mês Atual', marker='o', linestyle='-', color='blue')
+        plt.plot(df_anterior.index, df_anterior['valor'], label='Mês Anterior', marker='o', linestyle='--', color='green')
+        plt.title('Comparação de Movimentações por Dia (Mês Atual vs Mês Anterior)')
+        plt.xlabel('Dias do Mês')
+        plt.ylabel('Valor Total')
+        plt.legend()
+        plt.grid(True)
+        plt.savefig(filename_linhas)
         plt.close()
 
         tipo_totals = df.groupby('tipo')['valor'].sum()
