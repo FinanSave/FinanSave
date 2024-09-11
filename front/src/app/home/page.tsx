@@ -23,7 +23,7 @@ const HomePage = () => {
   const [balance, setBalance] = useState<number | null>(null)
   const [expensesLimit, setExpensesLimit] = useState<number | null>(null)
   const [spendingGoal, setSpendingGoal] = useState<number | null>(null)
-  const [limitExceeded, setLimitExceeded] = useState<boolean>(false)
+  // const [limitExceeded, setLimitExceeded] = useState<boolean>(false)
   const [haveBudget, setHaveBudget] = useState<boolean>(false)
 
   // Adicionar estado para o lembrete
@@ -47,11 +47,11 @@ const HomePage = () => {
           setHaveBudget(true)
         }
 
-        if (budgetData && budgetData.limite_gastos > budgetData.saldo) {
-          setLimitExceeded(true)
-        } else {
-          setLimitExceeded(false)
-        }
+        // if (budgetData && budgetData.limite_gastos < budgetData.saldo) {
+        //   setLimitExceeded(true)
+        // } else {
+        //   setLimitExceeded(false)
+        // }
       } catch (error) {
         console.error('Erro ao buscar os dados do orçamento:', error)
       }
@@ -144,12 +144,12 @@ const HomePage = () => {
             : `R$ ${spendingGoal}`}
         </p>
 
-        {limitExceeded && (
+        {/* {limitExceeded && (
           <p className="mt-4 text-lg font-semibold text-red-600">
             Atenção: O limite de gastos excede o saldo disponível! Por favor,
             ajuste seu orçamento.
           </p>
-        )}
+        )} */}
       </section>
 
       <section className="mb-8 flex w-full max-w-4xl items-center rounded-lg bg-white p-6 shadow-lg">
