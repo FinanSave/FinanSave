@@ -13,9 +13,11 @@ def criar_dashboard(request):
             user_id = data.get('user_id')
             mes = data.get('mes')
 
-            controlador_relatorio.criar_dashboard(user_id, mes)
+            entrada, saida = controlador_relatorio.criar_dashboard(user_id, mes)
             return JsonResponse({
-                "message": "Relatorio criado com sucesso"
+                "message": "Relatorio criado com sucesso",
+                "total_entrada": entrada,
+                "total_saida": saida
             }, status=201)
         except json.JSONDecodeError:
             return JsonResponse({"error": "JSON inválido"}, status=400)
