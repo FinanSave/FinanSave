@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from django.utils import timezone
 from .orcamento_model import Orcamento
@@ -26,6 +27,7 @@ class Movimentacao(models.Model):
     data_movimentacao = models.DateField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    proxima_movimentacao = models.DateField(default=timezone.now, editable= False)
 
     def __str__(self):
         return f"{self.nome} - {self.categoria} - R${self.valor:.2f}"
@@ -38,6 +40,7 @@ class Movimentacao(models.Model):
             dia_proximo = min(self.data_movimentacao.day, (date(ano_proximo, proximo_mes, 1) - timedelta(days=1)).day)
             
             self.proxima_movimentacao = date(ano_proximo, proximo_mes, dia_proximo)
+            self.recorrente = False
             self.save()
 
     def criar_nova_movimentacao(self):
@@ -50,7 +53,7 @@ class Movimentacao(models.Model):
                 orcamento = self.orcamento,
                 tipo = self.tipo,
                 quer_ser_lembrado = self.quer_ser_lembrado,
-                recorrente = self.recorrente,
+                recorrente = True,
                 mensagem = self.mensagem,
                 data_movimentacao = self.data_movimentacao,
             )

@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',  # Gerencia arquivos estáticos
     'corsheaders',                 # Habilita o CORS
     'rest_framework',              # Framework para APIs REST
-    'django_crontab',              # Cria e gerencia tarefas agendadas
-    ''
+    #'django_crontab',             # Cria e gerencia tarefas agendadas
+    'recorrencia',
 ]
 
 MIDDLEWARE = [
@@ -142,12 +142,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-CRONJOBS = [
-    ('0 20 * * *', 'backend.models.movimentacao_model.salvar_proxima_movimentacao'),
-    ('*/1 * * * *', 'backend.testecron.hello'),
+#CRONJOBS = [
+#    ('0 20 * * *', 'backend.models.movimentacao_model.salvar_proxima_movimentacao'),
+#    ('*/1 * * * *', 'backend.testecron.hello'),
     # Add more cron jobs as needed
-]
+#]
 
-CRON_CLASSES = [
-    'backend.testecron.hello',  # Caminho para o cron job
-]
+#CRON_CLASSES = [
+#    'backend.testecron.hello',  # Caminho para o cron job
+#]
