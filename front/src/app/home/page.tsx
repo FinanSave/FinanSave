@@ -14,8 +14,6 @@ import {
 } from 'react-icons/ai'
 import { getOrcamento } from '@/services/orcamento.service'
 import { LogOut } from 'lucide-react'
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
 
 const HomePage = () => {
   const router = useRouter()
@@ -37,11 +35,17 @@ const HomePage = () => {
         const token = localStorage.getItem('authToken') || ''
         const budgetData = await getOrcamento(token)
 
-        setHaveBudget(true)
-
         setBalance(budgetData?.saldo || null)
         setExpensesLimit(budgetData?.limite_gastos || null)
         setSpendingGoal(budgetData?.meta_economia || null)
+
+        console.log('Dados do orçamento:', budgetData)
+
+        if (budgetData == null) {
+          setHaveBudget(false)
+        } else {
+          setHaveBudget(true)
+        }
 
         if (budgetData && budgetData.limite_gastos > budgetData.saldo) {
           setLimitExceeded(true)
@@ -77,7 +81,7 @@ const HomePage = () => {
   }
 
   const handleDashboard = () => {
-    router.push('/dashboard') 
+    router.push('/dashboard')
   }
 
   const handleLogOff = () => {
