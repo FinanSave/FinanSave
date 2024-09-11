@@ -76,20 +76,8 @@ const HomePage = () => {
     router.push('/reminder')
   }
 
-  const handleReport = () => {
-    // Função de exportar PDF
-    const doc = new jsPDF()
-    autoTable(doc, {
-      head: [['Saldo Atual', 'Limite de Gastos', 'Meta de Economia']],
-      body: [
-        [
-          balance || 'Não registrado',
-          expensesLimit || 'Não registrado',
-          spendingGoal || 'Não registrado',
-        ],
-      ],
-    })
-    doc.save('orcamento.pdf')
+  const handleDashboard = () => {
+    router.push('/dashboard') 
   }
 
   const handleLogOff = () => {
@@ -211,7 +199,7 @@ const HomePage = () => {
           <span>Lembrete</span>
         </button>
         <button
-          onClick={handleReport}
+          onClick={handleDashboard}
           className="flex transform items-center justify-center space-x-2 rounded-lg bg-gray-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-gray-700"
         >
           <AiOutlineFileText className="text-xl" />
