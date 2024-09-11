@@ -8,12 +8,14 @@ ${BROWSER}     Chrome
 ${FIRST_NAME}  John
 ${LAST_NAME}   Doe
 ${PASSWORD}    123456
-${NEW_BALANCE}    5000
-${NEW_SPENDING_LIMIT}    2200
-${NEW_SAVING_GOAL}    3800
-${BALANCE}    6000
-${SPENDING_LIMIT}    3200
-${SAVING_GOAL}    4800
+${NEW_BALANCE}    500000
+${NEW_SPENDING_LIMIT}    220000
+${NEW_SAVING_GOAL}    380000
+${BALANCE}    600000
+${SPENDING_LIMIT}    320000
+${SAVING_GOAL}    480000
+${SALDO_ATUAL}  R$ 6000.00
+${NEW_SALDO_ATUAL}  R$ 5000.00
 # Variáveis aleatórias serão geradas no teste
 
 *** Test Cases ***
@@ -88,10 +90,17 @@ Edit budget
     Wait Until Element Is Visible    xpath=/html/body/div/div[2]/div/div/button[1]
     Click Button    xpath=/html/body/div/div[2]/div/div/button[1]
 
+    Sleep    2s
+
+    Click Button    xpath=/html/body/div/section[3]/button[1]
+
     # CHECAR SE ATUALIZOU NA TELA PRINCIPAL
 
-    # Editar um orçamento
+    Sleep    2s
 
+    Wait Until Page Contains    ${SALDO_ATUAL}    timeout=5s
+
+    # Editar um orçamento
     Click Button    xpath=/html/body/div/section[3]/button[2]
 
     Wait Until Element Is Visible    xpath=/html/body/div/div/div/h1
@@ -106,6 +115,9 @@ Edit budget
     Click Button    xpath=/html/body/div/div[2]/div/div/button[1]
 
     # CHECAR SE ATUALIZOU NA TELA PRINCIPAL
+    Wait Until Page Contains    ${NEW_SALDO_ATUAL}    timeout=5s
+
+    Sleep    2s
 
     # Fecha o navegador
     [Teardown]    Close Browser

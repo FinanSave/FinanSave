@@ -8,11 +8,15 @@ ${BROWSER}     Chrome
 ${FIRST_NAME}  John
 ${LAST_NAME}   Doe
 ${PASSWORD}    123456
-${NAME}    Teste2
+${NAME}    Teste 1
 ${VALUE}    2500
 ${DATA}    25/08/2024
-${MESSAGE}    Teste de mensagem 2
+${MESSAGE}    Mensagem de teste 1
 ${CATEGORY}    Outros
+${BALANCE}    600000
+${SPENDING_LIMIT}    320000
+${SAVING_GOAL}    480000
+${SALDO_ATUAL}  R$ 6000.00
 # Variáveis aleatórias serão geradas no teste
 
 *** Test Cases ***
@@ -68,20 +72,41 @@ Add entry
     Wait Until Page Contains Element    xpath=/html/body/div/section[3]/button[6]
     Sleep    1s
 
-    # CRIAR UM ORÇAMENTO AQUI
+    # Criar orçamento
 
-    # Registrar um gasto
+    Click Button    xpath=/html/body/div/section[3]/button[1]
+
+    Sleep    2s
+
+    Wait Until Element Is Visible    xpath=/html/body/div/div/div/h1
+
+    Input Text    xpath=//*[@id="saldo"]    ${BALANCE}
+    Input Text    xpath=//*[@id="limite"]    ${SPENDING_LIMIT}  
+    Input Text    xpath=//*[@id="metaEconomia"]    ${SAVING_GOAL}
+
+    Click Button    xpath=/html/body/div/div/div/form/button
+
     Sleep    1s
 
-    # Botão de gastos
-    Wait Until Element Is Visible    xpath=/html/body/div/section[3]/button[4]
+    Wait Until Element Is Visible    xpath=/html/body/div/div[2]/div/div/button[1]
+    Click Button    xpath=/html/body/div/div[2]/div/div/button[1]
+
+    Sleep    2s
+
+    Click Button    xpath=/html/body/div/section[3]/button[1]
+
+    # CHECAR SE ATUALIZOU NA TELA PRINCIPAL
+
+    Sleep    2s
+
+    Wait Until Page Contains    ${SALDO_ATUAL}    timeout=5s
+
     Click Button    xpath=/html/body/div/section[3]/button[4]
 
     Sleep    2s
-    
-    # Botão de registrar gastos
+
     Wait Until Element Is Visible    xpath=/html/body/div/section/button[1]
-    Click Element    xpath=/html/body/div/section/button[1]
+    Click Button    xpath=/html/body/div/section/button[1]
 
     # Preenche os campos do formulário
     Input Text    xpath=//*[@id="name"]     ${NAME}
@@ -90,7 +115,7 @@ Add entry
     # Marcar checkbox "Recorrente" e "Quer ser lembrado" se desejado
     Click Element    xpath=//*[@id="recorrente"]
 
-    # Preenche a Data do gasto
+    # Preenche a Data 
     Input Text    xpath=//*[@id="expenseDate"]     ${DATA}
     
     # Seleciona a Categoria no dropdown
@@ -99,14 +124,10 @@ Add entry
     # Preenche a mensagem (se houver)
     Input Text    xpath=//*[@id="mensagem"]    ${MESSAGE}
 
-    # Clica no botão "Confirmar gasto"
+    # Clica no botão "Confirmar Entrada"
     Click Element    xpath=/html/body/div/div[1]/div/form/div[7]/button[2]
 
     Sleep    2s
-
-    # CONFIRMAR SE O GASTO PEGOU
-
-    # REMOVER O GASTO
 
     # Fecha o navegador
     [Teardown]    Close Browser

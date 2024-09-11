@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Rebot 7.0 (Python 3.12.2 on win32)" generated="2024-09-11T18:26:18.231175" rpa="false" schemaversion="5">
+<suite id="s1" name="CT01-create account" source="C:\Users\VICTOR\Desktop\ENG\FinanSave\front\Tests\CT01-create_account.robot">
+<test id="s1-t1" name="Create A New Account" line="14">
+<kw name="Generate Random String" owner="String">
+<msg time="2024-09-11T18:26:08.402324" level="INFO">${RANDOM_STRING} = nRrnaDKQSt</msg>
+<var>${RANDOM_STRING}</var>
+<arg>10</arg>
+<arg>[LETTERS]</arg>
+<doc>Generates a string with a desired ``length`` from the given ``chars``.</doc>
+<status status="PASS" start="2024-09-11T18:26:08.402324" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2024-09-11T18:26:08.402324" level="INFO">${USERNAME} = user_nRrnaDKQSt</msg>
+<var>${USERNAME}</var>
+<arg>user_${RANDOM_STRING}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2024-09-11T18:26:08.402324" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2024-09-11T18:26:08.402324" level="INFO">${EMAIL} = nRrnaDKQSt@email.com</msg>
+<var>${EMAIL}</var>
+<arg>${RANDOM_STRING}@email.com</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2024-09-11T18:26:08.402324" elapsed="0.000000"/>
+</kw>
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2024-09-11T18:26:08.402324" level="INFO">Opening browser 'Chrome' to base url 'http://localhost:3000'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2024-09-11T18:26:08.402324" elapsed="2.120904"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2024-09-11T18:26:10.523228" elapsed="0.040803"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/header/div/div[2]/div/button[1]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-09-11T18:26:10.564031" elapsed="0.031853"/>
+</kw>
+<kw name="Scroll Element Into View" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/header/div/div[2]/div/button[1]</arg>
+<doc>Scrolls the element identified by ``locator`` into view.</doc>
+<status status="PASS" start="2024-09-11T18:26:10.596893" elapsed="0.270087"/>
+</kw>
+<kw name="Click Button" owner="SeleniumLibrary">
+<msg time="2024-09-11T18:26:10.866980" level="INFO">Clicking button 'xpath=/html/body/div/header/div/div[2]/div/button[1]'.</msg>
+<arg>xpath=/html/body/div/header/div/div[2]/div/button[1]</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T18:26:10.866980" elapsed="0.038816"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2024-09-11T18:26:13.915133" level="INFO">Slept 3 seconds.</msg>
+<arg>3s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2024-09-11T18:26:10.914139" elapsed="3.000994"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@id="firstName"]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-09-11T18:26:13.915133" elapsed="0.015668"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-09-11T18:26:13.930801" level="INFO">Typing text 'John' into text field 'xpath=//*[@id="firstName"]'.</msg>
+<arg>xpath=//*[@id="firstName"]</arg>
+<arg>${FIRST_NAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T18:26:13.930801" elapsed="0.127205"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-09-11T18:26:14.058006" level="INFO">Typing text 'Doe' into text field 'xpath=//*[@id="lastName"]'.</msg>
+<arg>xpath=//*[@id="lastName"]</arg>
+<arg>${LAST_NAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.058006" elapsed="0.117126"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-09-11T18:26:14.175132" level="INFO">Typing text 'user_nRrnaDKQSt' into text field 'xpath=//*[@id="username"]'.</msg>
+<arg>xpath=//*[@id="username"]</arg>
+<arg>${USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.175132" elapsed="0.129917"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-09-11T18:26:14.305049" level="INFO">Typing text '123456' into text field 'xpath=//*[@id="password"]'.</msg>
+<arg>xpath=//*[@id="password"]</arg>
+<arg>${PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.305049" elapsed="0.106091"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-09-11T18:26:14.412364" level="INFO">Typing text 'nRrnaDKQSt@email.com' into text field 'xpath=//*[@id="email"]'.</msg>
+<arg>xpath=//*[@id="email"]</arg>
+<arg>${EMAIL}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.411818" elapsed="0.131707"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@id="isAdult"]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.543525" elapsed="0.015701"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2024-09-11T18:26:14.574856" level="INFO">Clicking element 'xpath=//*[@id="isAdult"]'.</msg>
+<arg>xpath=//*[@id="isAdult"]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.559226" elapsed="0.062162"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[text()='Cadastrar']</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.621388" elapsed="0.022729"/>
+</kw>
+<kw name="Scroll Element Into View" owner="SeleniumLibrary">
+<arg>xpath=//button[text()='Cadastrar']</arg>
+<doc>Scrolls the element identified by ``locator`` into view.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.644117" elapsed="0.275503"/>
+</kw>
+<kw name="Click Button" owner="SeleniumLibrary">
+<msg time="2024-09-11T18:26:14.919620" level="INFO">Clicking button 'xpath=//button[text()='Cadastrar']'.</msg>
+<arg>xpath=//button[text()='Cadastrar']</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.919620" elapsed="0.068282"/>
+</kw>
+<kw name="Wait Until Page Contains Element" owner="SeleniumLibrary">
+<arg>xpath=//h1[text()='Fazer login']</arg>
+<doc>Waits until the element ``locator`` appears on the current page.</doc>
+<status status="PASS" start="2024-09-11T18:26:14.988931" elapsed="1.062806"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2024-09-11T18:26:16.051737" elapsed="2.163394"/>
+</kw>
+<doc>Teste para criar uma nova conta no sistema Finansave.</doc>
+<status status="PASS" start="2024-09-11T18:26:08.395813" elapsed="9.819318"/>
+</test>
+<status status="PASS" start="2024-09-11T18:26:08.120765" elapsed="10.096396"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="CT01-create account">CT01-create account</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

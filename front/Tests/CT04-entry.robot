@@ -13,6 +13,10 @@ ${VALUE}    2500
 ${DATA}    25/08/2024
 ${MESSAGE}    Mensagem de teste 1
 ${CATEGORY}    Outros
+${BALANCE}    600000
+${SPENDING_LIMIT}    320000
+${SAVING_GOAL}    480000
+${SALDO_ATUAL}  R$ 6000.00
 # Variáveis aleatórias serão geradas no teste
 
 *** Test Cases ***
@@ -68,7 +72,34 @@ Add entry
     Wait Until Page Contains Element    xpath=/html/body/div/section[3]/button[6]
     Sleep    1s
 
-    # CRIAR UM ORÇAMENTO AQUI
+    # Criar orçamento
+
+    Click Button    xpath=/html/body/div/section[3]/button[1]
+
+    Sleep    2s
+
+    Wait Until Element Is Visible    xpath=/html/body/div/div/div/h1
+
+    Input Text    xpath=//*[@id="saldo"]    ${BALANCE}
+    Input Text    xpath=//*[@id="limite"]    ${SPENDING_LIMIT}  
+    Input Text    xpath=//*[@id="metaEconomia"]    ${SAVING_GOAL}
+
+    Click Button    xpath=/html/body/div/div/div/form/button
+
+    Sleep    1s
+
+    Wait Until Element Is Visible    xpath=/html/body/div/div[2]/div/div/button[1]
+    Click Button    xpath=/html/body/div/div[2]/div/div/button[1]
+
+    Sleep    2s
+
+    Click Button    xpath=/html/body/div/section[3]/button[1]
+
+    # CHECAR SE ATUALIZOU NA TELA PRINCIPAL
+
+    Sleep    2s
+
+    Wait Until Page Contains    ${SALDO_ATUAL}    timeout=5s
 
     Click Button    xpath=/html/body/div/section[3]/button[3]
 
@@ -96,9 +127,7 @@ Add entry
     # Clica no botão "Confirmar Entrada"
     Click Element    xpath=/html/body/div/div[1]/div/form/div[7]/button[2]
 
-    # CONFIRMAR SE A ENTRADA PEGOU
-
-    # REMOVER A ENTRADA
+    Sleep    2s
 
     # Fecha o navegador
     [Teardown]    Close Browser
