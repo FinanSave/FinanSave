@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Rebot 7.0 (Python 3.12.2 on win32)" generated="2024-09-11T08:50:50.475647" rpa="false" schemaversion="5">
+<suite id="s1" name="Login" source="C:\Users\VICTOR\Desktop\ENG\FinanSave\front\Tests\login.robot">
+<test id="s1-t1" name="Fazer Login Com Nova Conta" line="11">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2024-09-11T08:50:44.123118" level="INFO">Opening browser 'Chrome' to base url 'http://localhost:3000'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2024-09-11T08:50:44.123118" elapsed="1.851262"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2024-09-11T08:50:45.975478" elapsed="0.033005"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/header/div/div[2]/div/button[2]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-09-11T08:50:46.009484" elapsed="0.018734"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2024-09-11T08:50:46.028218" level="INFO">Clicking element 'xpath=/html/body/div/header/div/div[2]/div/button[2]'.</msg>
+<arg>xpath=/html/body/div/header/div/div[2]/div/button[2]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T08:50:46.028218" elapsed="0.036513"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@id="login"]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-09-11T08:50:46.064731" elapsed="0.211533"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-09-11T08:50:46.289426" level="INFO">Typing text '123@gmail.com' into text field 'xpath=//*[@id="login"]'.</msg>
+<arg>xpath=//*[@id="login"]</arg>
+<arg>${USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T08:50:46.288903" elapsed="0.090033"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-09-11T08:50:46.378936" level="INFO">Typing text '123123' into text field 'xpath=//*[@id="senha"]'.</msg>
+<arg>xpath=//*[@id="senha"]</arg>
+<arg>${PASSWORD}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T08:50:46.378936" elapsed="0.068354"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/div/div/form/button</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2024-09-11T08:50:46.447290" elapsed="0.018578"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2024-09-11T08:50:46.467997" level="INFO">Clicking element 'xpath=/html/body/div/div/div/form/button'.</msg>
+<arg>xpath=/html/body/div/div/div/form/button</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-09-11T08:50:46.467997" elapsed="0.037017"/>
+</kw>
+<kw name="Wait Until Page Contains Element" owner="SeleniumLibrary">
+<arg>xpath=/html/body/div/section[3]/button[6]</arg>
+<doc>Waits until the element ``locator`` appears on the current page.</doc>
+<status status="PASS" start="2024-09-11T08:50:46.505014" elapsed="0.836946"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2024-09-11T08:50:48.343357" level="INFO">Slept 1 second.</msg>
+<arg>1s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2024-09-11T08:50:47.341960" elapsed="1.001397"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2024-09-11T08:50:48.343357" elapsed="2.132290"/>
+</kw>
+<doc>Teste para fazer login no sistema Finansave.</doc>
+<status status="PASS" start="2024-09-11T08:50:44.120743" elapsed="6.354904"/>
+</test>
+<status status="PASS" start="2024-09-11T08:50:43.951303" elapsed="6.524344"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Login">Login</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
