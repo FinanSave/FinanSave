@@ -110,7 +110,7 @@ class ControladorRelatorio:
         plt.xlabel('Dias do Mês')
         plt.ylabel('Valor Total')
         plt.xticks(np.arange(df_atual.index.min(), df_atual.index.max() + 1, 1)) # intervalo eixo X
-        plt.yticks(np.arange(0, df_atual['valor'].max() + 20, 20)) # intervalo eixo Y
+        # plt.yticks(np.arange(0, df_atual['valor'].max() + 20, 20)) # intervalo eixo Y
         plt.legend()
         plt.grid(True)
         caminho_arq = os.path.join(pasta_dashboard, f"{user_id}_{mes_int}_linhas.png")
