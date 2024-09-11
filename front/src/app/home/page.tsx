@@ -10,6 +10,7 @@ import {
   AiOutlineMinusCircle,
   AiOutlineBell,
   AiOutlineFileText,
+  AiOutlineUser,
 } from 'react-icons/ai'
 import { getOrcamento } from '@/services/orcamento.service'
 import { LogOut } from 'lucide-react'
@@ -53,32 +54,6 @@ const HomePage = () => {
     }
 
     fetchBudgetData()
-
-    // // Função para verificar lembretes
-    // const checkReminder = async () => {
-    //   try {
-    //     const token = localStorage.getItem('authToken') || ''
-    //     const reminderData = await getReminderData(token)
-
-    //     // Exemplo de verificação de lembrete
-    //     if (reminderData && reminderData.timeLeft <= 24 * 60 * 60 * 1000) {
-    //       // 24 horas em milissegundos
-    //       setReminder(`Lembrete: Pagar ${reminderData.gasto} em 24 horas.`)
-    //     } else {
-    //       setReminder(null)
-    //     }
-    //   } catch (error) {
-    //     console.error('Erro ao verificar lembretes:', error)
-    //   }
-    // }
-
-    // // Verificação periódica de lembrete a cada minuto
-    // const reminderInterval = setInterval(() => {
-    //   checkReminder()
-    // }, 60000)
-
-    // // Limpar o intervalo quando o componente for desmontado
-    // return () => clearInterval(reminderInterval)
   }, [])
 
   const handleCreateBudget = () => {
@@ -121,18 +96,32 @@ const HomePage = () => {
     router.push('/')
   }
 
+  const handleManageUser = () => {
+    router.push('/manage-user')
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-start bg-gray-50 p-8">
       <div className="mb-8 flex w-full items-center justify-between">
         <h1 className="text-3xl font-bold text-blue-700">
           👋 Bem-vindo ao Finansave
         </h1>
-        <button
-          onClick={handleLogOff}
-          className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
-        >
-          <LogOut /> <span>Logout</span>
-        </button>
+        <div className="flex items-center space-x-4">
+          {/* Botão para Gerenciar Usuário */}
+          <button
+            onClick={handleManageUser}
+            className="rounded-full bg-gray-300 p-2"
+          >
+            <AiOutlineUser className="text-xl" />
+          </button>
+          {/* Botão de Logout */}
+          <button
+            onClick={handleLogOff}
+            className="flex space-x-1 rounded bg-blue-700 px-4 py-2 text-white hover:bg-blue-800"
+          >
+            <LogOut /> <span>Logout</span>
+          </button>
+        </div>
       </div>
 
       {/* Exibe lembrete, se houver */}
