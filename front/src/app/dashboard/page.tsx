@@ -130,7 +130,7 @@ const DashboardPage = () => {
       <div className="mt-8 grid grid-cols-1 gap-6">
         <div className="rounded-md bg-white p-6 shadow-md">
           <h2 className="text-xl font-semibold text-gray-800">
-            Gastos e Entradas - Movimentações por Categoria
+            Gastos - Movimentações por Categoria
           </h2>
           <img src={imagens?.barras} alt="Movimentações por Categoria" />
         </div>
