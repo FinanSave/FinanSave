@@ -3,6 +3,7 @@ from backend.controllers.orcamento_controller import ControladorOrcamento
 from backend.controllers.movimentacao_controller import ControladorMovimentacao
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
 class ControladorRelatorio:
     def __init__(self):
@@ -72,17 +73,22 @@ class ControladorRelatorio:
         df_atual = movimentacoes_para_dataframe(lista_resultados_mes_atual)
         df_anterior = movimentacoes_para_dataframe(lista_resultados_mes_anterior)
 
+        # criação da pasta para imagens dos gráficso
+        # caminho relativo para a pasta 'dashboard'
+        caminho_back = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')  # caminho dá na pasta back
+        pasta_dashboard = os.path.join(caminho_back, 'dashboard')
+        os.makedirs(pasta_dashboard, exist_ok=True) # cria a pasta 'dashboard' se não existir
+
         # PIZZA
-        filename_pizza='pizza.png'
         tipo_counts = df['tipo'].value_counts()
         plt.figure(figsize=(8, 8))
         plt.pie(tipo_counts, labels=tipo_counts.index, autopct='%1.1f%%', startangle=140)
         plt.title('Tipos de Movimentação')
-        plt.savefig(filename_pizza)
+        caminho_arq = os.path.join(pasta_dashboard, f"{user_id}_{mes_int}_pizza.png")
+        plt.savefig(caminho_arq)
         plt.close()
 
         # BARRAS
-        filename_barras = 'barras.png'
         df['valor'] = pd.to_numeric(df['valor'], errors='coerce')
         categoria_totals = df.groupby('categoria')['valor'].sum()
         plt.figure(figsize=(10, 6))
@@ -91,11 +97,11 @@ class ControladorRelatorio:
         plt.xlabel('Valor Total')
         plt.ylabel('Categoria')
         plt.xticks(rotation=45)
-        plt.savefig(filename_barras)
+        caminho_arq = os.path.join(pasta_dashboard, f"{user_id}_{mes_int}_barras.png")
+        plt.savefig(caminho_arq)
         plt.close()
 
         #LINHAS
-        filename_linhas = 'linhas_comparativo.png'
         plt.figure(figsize=(10, 6))
         plt.plot(df_atual.index, df_atual['valor'], label='Mês Atual', marker='o', linestyle='-', color='blue')
         plt.plot(df_anterior.index, df_anterior['valor'], label='Mês Anterior', marker='o', linestyle='--', color='green')
@@ -104,7 +110,8 @@ class ControladorRelatorio:
         plt.ylabel('Valor Total')
         plt.legend()
         plt.grid(True)
-        plt.savefig(filename_linhas)
+        caminho_arq = os.path.join(pasta_dashboard, f"{user_id}_{mes_int}_linhas.png")
+        plt.savefig(caminho_arq)
         plt.close()
 
         tipo_totals = df.groupby('tipo')['valor'].sum()
