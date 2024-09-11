@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import BackHomeButton from '@/components/BackHomeButton'
 import Header from '@/components/Header'
@@ -23,16 +23,7 @@ const CreateBudgetPage = () => {
     metaEconomiaError: '',
   })
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
-  const [hasBudget, setHasBudget] = useState(false)
   const router = useRouter()
-
-  useEffect(() => {
-    // Verifica se já existe um orçamento no localStorage
-    const budgetExists = localStorage.getItem('hasBudget')
-    if (budgetExists) {
-      setHasBudget(true)
-    }
-  }, [])
 
   const formatCurrency = (value: string) => {
     const cleanedValue = value.replace(/\D/g, '')
@@ -123,11 +114,6 @@ const CreateBudgetPage = () => {
       saldo: convertToNumber(formData.saldo).toString(),
       limite: convertToNumber(formData.limite).toString(),
       metaEconomia: convertToNumber(formData.metaEconomia).toString(),
-    }
-
-    if (hasBudget) {
-      alert('Você já criou um orçamento. Não é possível criar outro.')
-      return
     }
 
     console.log('Dados do orçamento:', dataToSubmit)

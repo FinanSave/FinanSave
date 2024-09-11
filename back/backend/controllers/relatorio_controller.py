@@ -1,7 +1,9 @@
+from backend import settings
 from backend.repositories.relatorio_repository import RepositorioRelatorio
 from backend.controllers.orcamento_controller import ControladorOrcamento
 from backend.controllers.movimentacao_controller import ControladorMovimentacao
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import os
 
@@ -51,9 +53,8 @@ class ControladorRelatorio:
         }
 
         df = pd.DataFrame(data)
-        print(df)
 
-        lista_movimentacoes = self.controlador_movimentacao.buscar_movimentacao_orcamento_id(orcamento.id)
+        lista_movimentacoes = self.controlador_movimentacao.buscar_movimentacao_tipo('Saida', user_id)
     
         # obtendo movimentações do mês atual
         lista_resultados_mes_atual = [mov for mov in lista_movimentacoes if mov.data_movimentacao.month == mes_int]
@@ -75,8 +76,7 @@ class ControladorRelatorio:
 
         # criação da pasta para imagens dos gráficso
         # caminho relativo para a pasta 'dashboard'
-        caminho_back = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')  # caminho dá na pasta back
-        pasta_dashboard = os.path.join(caminho_back, 'dashboard')
+        pasta_dashboard = os.path.join(settings.MEDIA_ROOT, 'dashboard')
         os.makedirs(pasta_dashboard, exist_ok=True) # cria a pasta 'dashboard' se não existir
 
         # PIZZA
@@ -89,8 +89,9 @@ class ControladorRelatorio:
         plt.close()
 
         # BARRAS
-        df['valor'] = pd.to_numeric(df['valor'], errors='coerce')
-        categoria_totals = df.groupby('categoria')['valor'].sum()
+        df_saida = df.loc[df['tipo'] == 'Saida']
+        df_saida['valor'] = pd.to_numeric(df_saida['valor'], errors='coerce')
+        categoria_totals = df_saida.groupby('categoria')['valor'].sum()
         plt.figure(figsize=(10, 6))
         categoria_totals.plot(kind='barh', color='yellow')
         plt.title('Movimentações por Categoria')
@@ -105,9 +106,11 @@ class ControladorRelatorio:
         plt.figure(figsize=(10, 6))
         plt.plot(df_atual.index, df_atual['valor'], label='Mês Atual', marker='o', linestyle='-', color='blue')
         plt.plot(df_anterior.index, df_anterior['valor'], label='Mês Anterior', marker='o', linestyle='--', color='green')
-        plt.title('Comparação de Movimentações por Dia (Mês Atual vs Mês Anterior)')
+        plt.title('Comparação de Gastos por Dia (Mês Atual vs Mês Anterior)')
         plt.xlabel('Dias do Mês')
         plt.ylabel('Valor Total')
+        plt.xticks(np.arange(df_atual.index.min(), df_atual.index.max() + 1, 1)) # intervalo eixo X
+        plt.yticks(np.arange(0, df_atual['valor'].max() + 20, 20)) # intervalo eixo Y
         plt.legend()
         plt.grid(True)
         caminho_arq = os.path.join(pasta_dashboard, f"{user_id}_{mes_int}_linhas.png")
@@ -115,6 +118,5 @@ class ControladorRelatorio:
         plt.close()
 
         tipo_totals = df.groupby('tipo')['valor'].sum()
-        return tipo_totals
-
-        
+        print(tipo_totals.tolist())
+        return tipo_totals[0], tipo_totals[1]

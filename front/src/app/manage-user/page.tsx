@@ -1,37 +1,96 @@
 'use client'
 
-import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 import Header from '@/components/Header'
 import BackHomeButton from '@/components/BackHomeButton'
+import { Contact, KeyRound, Mail } from 'lucide-react'
+import { getUserData, userDelete, userUpdate } from '@/services/user.service'
+import useAuth from '@/middlewares/auth'
 
 const ManageUserPage = () => {
+  useAuth()
   const router = useRouter()
 
-  // Estados para armazenar os dados do usuário
-  const [formData, setFormData] = useState({
-    primeiroNome: '',
-    sobrenome: '',
-    nomeUsuario: '',
-    senha: '',
-    email: '',
-  })
+  const [name, setName] = useState<string>('')
+  const [login, setLogin] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+  const [primeiroNome, setPrimeiroNome] = useState<string>('')
+  const [sobrenome, setSobrenome] = useState<string>('')
+  const [nomeUsuario, setNomeUsuario] = useState<string>('')
+  const [senha, setSenha] = useState<string>('')
+  const [emailForm, setEmailForm] = useState<string>('')
+
+  const resetForm = () => {
+    setPrimeiroNome('')
+    setSobrenome('')
+    setNomeUsuario('')
+    setSenha('')
+    setEmailForm('')
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const fetchUserData = async () => {
+    const token = localStorage.getItem('authToken') || ''
+
+    try {
+      const userData = await getUserData(token)
+
+      if (userData) {
+        setName(userData.nome)
+        setLogin(userData.login)
+        setEmail(userData.email)
+      }
+    } catch (error) {
+      console.error('Erro ao buscar os dados do usuário:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchUserData()
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Lógica para enviar os dados editados ao backend
-    console.log('Dados do usuário atualizados:', formData)
+
+    const userToUpdate = {
+      primeiroNome,
+      sobrenome,
+      login: nomeUsuario,
+      email: emailForm,
+      senha,
+    }
+
+    const token = localStorage.getItem('authToken') || ''
+
+    const orcamentoEditado = await userUpdate(
+      token,
+      userToUpdate.primeiroNome,
+      userToUpdate.sobrenome,
+      userToUpdate.login,
+      userToUpdate.email,
+      userToUpdate.senha,
+    )
+
+    console.log(orcamentoEditado)
+
+    resetForm()
+    fetchUserData()
   }
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (window.confirm('Tem certeza que deseja deletar sua conta?')) {
-      // Lógica para deletar a conta
-      console.log('Conta deletada')
+      const token = localStorage.getItem('authToken') || ''
+
+      try {
+        const usuarioDeletado = await userDelete(token)
+        console.log(usuarioDeletado)
+
+        localStorage.removeItem('authToken')
+        router.push('/')
+      } catch (error) {
+        console.error('Erro ao deletar conta:', error)
+      }
     }
   }
 
@@ -46,12 +105,32 @@ const ManageUserPage = () => {
       </Header>
 
       {/* Container principal */}
-      <div className="flex flex-col items-center justify-start min-h-screen bg-gray-50 p-8">
-        
+      <div className="flex min-h-screen flex-col items-center justify-start bg-gray-50 p-8">
+        <section className="mb-8 w-auto max-w-4xl rounded-lg bg-blue-300 p-6 shadow-md">
+          <h2 className="text-2xl font-semibold text-gray-900">Seus dados</h2>
+          <p className="mt-4 flex text-lg text-gray-800">
+            <Contact className="mr-1" /> Nome: {name}
+          </p>
+          <p className="mt-2 flex text-lg text-gray-800">
+            <KeyRound className="mr-1.5" />
+            Login: {login}
+          </p>
+          <p className="mt-2 flex text-lg text-gray-800">
+            <Mail className="mr-1.5" />
+            Email: {email}
+          </p>
+        </section>
+
         {/* Formulário de gerenciamento de usuário */}
-        <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md bg-white p-6 shadow-md rounded-lg mt-4">
+        <form
+          onSubmit={handleSubmit}
+          className="mt-4 w-full max-w-md space-y-4 rounded-lg bg-white p-6 shadow-md"
+        >
           <div>
-            <label htmlFor="primeiroNome" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="primeiroNome"
+              className="block text-sm font-medium text-gray-700"
+            >
               Primeiro nome
             </label>
             <input
@@ -59,13 +138,16 @@ const ManageUserPage = () => {
               name="primeiroNome"
               type="text"
               className="mt-1 w-full rounded-md border border-gray-300 p-2"
-              value={formData.primeiroNome}
-              onChange={handleChange}
+              value={primeiroNome}
+              onChange={(e) => setPrimeiroNome(e.target.value)}
             />
           </div>
 
           <div>
-            <label htmlFor="sobrenome" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="sobrenome"
+              className="block text-sm font-medium text-gray-700"
+            >
               Sobrenome
             </label>
             <input
@@ -73,13 +155,16 @@ const ManageUserPage = () => {
               name="sobrenome"
               type="text"
               className="mt-1 w-full rounded-md border border-gray-300 p-2"
-              value={formData.sobrenome}
-              onChange={handleChange}
+              value={sobrenome}
+              onChange={(e) => setSobrenome(e.target.value)}
             />
           </div>
 
           <div>
-            <label htmlFor="nomeUsuario" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="nomeUsuario"
+              className="block text-sm font-medium text-gray-700"
+            >
               Nome de usuário
             </label>
             <input
@@ -87,13 +172,16 @@ const ManageUserPage = () => {
               name="nomeUsuario"
               type="text"
               className="mt-1 w-full rounded-md border border-gray-300 p-2"
-              value={formData.nomeUsuario}
-              onChange={handleChange}
+              value={nomeUsuario}
+              onChange={(e) => setNomeUsuario(e.target.value)}
             />
           </div>
 
           <div>
-            <label htmlFor="senha" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="senha"
+              className="block text-sm font-medium text-gray-700"
+            >
               Senha
             </label>
             <input
@@ -101,13 +189,16 @@ const ManageUserPage = () => {
               name="senha"
               type="password"
               className="mt-1 w-full rounded-md border border-gray-300 p-2"
-              value={formData.senha}
-              onChange={handleChange}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               E-mail
             </label>
             <input
@@ -115,8 +206,8 @@ const ManageUserPage = () => {
               name="email"
               type="email"
               className="mt-1 w-full rounded-md border border-gray-300 p-2"
-              value={formData.email}
-              onChange={handleChange}
+              value={emailForm}
+              onChange={(e) => setEmailForm(e.target.value)}
             />
           </div>
 
