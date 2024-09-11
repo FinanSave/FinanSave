@@ -25,6 +25,9 @@ class ControladorUsuario:
     def atualizar_usuario(self, id, nome=None, login=None, email=None, senha=None):
         if senha:
             senha_hash = make_password(senha)    # Criptografa a senha, se for alterada
+        else:
+            senha_hash = None
+            
         return self.repositorio_usuarios.atualizar_usuario(id, nome, login, email, senha_hash)
 
     def deletar_usuario(self, id):

@@ -362,7 +362,7 @@ const EntryPage = () => {
                   <select
                     id="entryId"
                     name="entryId"
-                    value={selectedEntry}
+                    value={selectedEntry || ''}
                     onChange={(e) => setSelectedEntry(Number(e.target.value))}
                     className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     required
