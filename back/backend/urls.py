@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from .views.user_views import cadastrar_usuario, atualizar_usuario, buscar_usuario_por_id, deletar_usuario, buscar_usuarios, login
 from .views.orcamento_views import criar_orcamento, buscar_orcamentos, atualizar_orcamento, deletar_orcamento, buscar_orcamento_por_user_id, buscar_saldo, buscar_orcamento_por_orcamento_id
 from .views.movimentacao_view import registrar_gasto, registrar_entrada, buscar_movimentacoes, deletar_movimentacao, buscar_movimentacao_orcamento_id, buscar_movimentacao_tipo, atualizar_movimentacao, buscar_movimentacao_recorrente, buscar_movimentacao_categoria
@@ -47,3 +49,6 @@ urlpatterns = [
   path('movimentacao/atualizar/<int:movimentacao_id>/', atualizar_movimentacao, name='atualizar_movimentacao'),
   path('relatorio/criar/', criar_dashboard, name='criar_dashboard'),
   ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
