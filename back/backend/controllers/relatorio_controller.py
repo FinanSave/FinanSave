@@ -1,3 +1,4 @@
+from backend import settings
 from backend.repositories.relatorio_repository import RepositorioRelatorio
 from backend.controllers.orcamento_controller import ControladorOrcamento
 from backend.controllers.movimentacao_controller import ControladorMovimentacao
@@ -75,8 +76,7 @@ class ControladorRelatorio:
 
         # criação da pasta para imagens dos gráficso
         # caminho relativo para a pasta 'dashboard'
-        caminho_back = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')  # caminho dá na pasta back
-        pasta_dashboard = os.path.join(caminho_back, 'dashboard')
+        pasta_dashboard = os.path.join(settings.MEDIA_ROOT, 'dashboard')
         os.makedirs(pasta_dashboard, exist_ok=True) # cria a pasta 'dashboard' se não existir
 
         # PIZZA
@@ -120,5 +120,3 @@ class ControladorRelatorio:
         tipo_totals = df.groupby('tipo')['valor'].sum()
         print(tipo_totals.tolist())
         return tipo_totals[0], tipo_totals[1]
-
-        
