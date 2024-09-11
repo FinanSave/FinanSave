@@ -14,8 +14,6 @@ import {
 } from 'react-icons/ai'
 import { getOrcamento } from '@/services/orcamento.service'
 import { LogOut } from 'lucide-react'
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
 
 const HomePage = () => {
   const router = useRouter()
@@ -25,7 +23,7 @@ const HomePage = () => {
   const [balance, setBalance] = useState<number | null>(null)
   const [expensesLimit, setExpensesLimit] = useState<number | null>(null)
   const [spendingGoal, setSpendingGoal] = useState<number | null>(null)
-  const [limitExceeded, setLimitExceeded] = useState<boolean>(false)
+  // const [limitExceeded, setLimitExceeded] = useState<boolean>(false)
   const [haveBudget, setHaveBudget] = useState<boolean>(false)
 
   // Adicionar estado para o lembrete
@@ -37,17 +35,23 @@ const HomePage = () => {
         const token = localStorage.getItem('authToken') || ''
         const budgetData = await getOrcamento(token)
 
-        setHaveBudget(true)
-
         setBalance(budgetData?.saldo || null)
         setExpensesLimit(budgetData?.limite_gastos || null)
         setSpendingGoal(budgetData?.meta_economia || null)
 
-        if (budgetData && budgetData.limite_gastos > budgetData.saldo) {
-          setLimitExceeded(true)
+        console.log('Dados do orçamento:', budgetData)
+
+        if (budgetData == null) {
+          setHaveBudget(false)
         } else {
-          setLimitExceeded(false)
+          setHaveBudget(true)
         }
+
+        // if (budgetData && budgetData.limite_gastos < budgetData.saldo) {
+        //   setLimitExceeded(true)
+        // } else {
+        //   setLimitExceeded(false)
+        // }
       } catch (error) {
         console.error('Erro ao buscar os dados do orçamento:', error)
       }
@@ -76,20 +80,8 @@ const HomePage = () => {
     router.push('/reminder')
   }
 
-  const handleReport = () => {
-    // Função de exportar PDF
-    const doc = new jsPDF()
-    autoTable(doc, {
-      head: [['Saldo Atual', 'Limite de Gastos', 'Meta de Economia']],
-      body: [
-        [
-          balance || 'Não registrado',
-          expensesLimit || 'Não registrado',
-          spendingGoal || 'Não registrado',
-        ],
-      ],
-    })
-    doc.save('orcamento.pdf')
+  const handleDashboard = () => {
+    router.push('/dashboard')
   }
 
   const handleLogOff = () => {
@@ -152,12 +144,12 @@ const HomePage = () => {
             : `R$ ${spendingGoal}`}
         </p>
 
-        {limitExceeded && (
+        {/* {limitExceeded && (
           <p className="mt-4 text-lg font-semibold text-red-600">
             Atenção: O limite de gastos excede o saldo disponível! Por favor,
             ajuste seu orçamento.
           </p>
-        )}
+        )} */}
       </section>
 
       <section className="mb-8 flex w-full max-w-4xl items-center rounded-lg bg-white p-6 shadow-lg">
@@ -211,7 +203,7 @@ const HomePage = () => {
           <span>Lembrete</span>
         </button>
         <button
-          onClick={handleReport}
+          onClick={handleDashboard}
           className="flex transform items-center justify-center space-x-2 rounded-lg bg-gray-600 px-6 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 hover:bg-gray-700"
         >
           <AiOutlineFileText className="text-xl" />

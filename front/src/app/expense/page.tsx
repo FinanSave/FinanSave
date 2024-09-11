@@ -356,7 +356,7 @@ const ExpensePage = () => {
                   <select
                     id="expenseId"
                     name="expenseId"
-                    value={selectedExpense}
+                    value={selectedExpense || ''}
                     onChange={(e) => setSelectedExpense(Number(e.target.value))}
                     className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     required
